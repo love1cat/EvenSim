@@ -1,0 +1,16 @@
+*.o
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+
+!build/
+build/*
+
+!build/EEinput/
+!build/DrawFigures/
+
+build/DrawFigures/*
+!build/DrawFigures/drawfig.gp
+
+CMakeFiles/*
+
