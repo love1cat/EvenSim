@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "OneRun(int, int, double, int, int, int, std::string const&amp;, bool, std::string const&amp;, int, int, int, int):main.cc">
+      </ContextState>
+      <ContextState
+         contextName = "even_energy::LimitedOptimalAlgorithm::SolveHelper(even_energy::AlgorithmInputReader const&amp;, int, int, std::vector&lt;int, std::allocator&lt;int&gt; &gt;&amp;, int&amp;):limited_optalg.cc">
+         <PersistentStrings>
+            <PersistentString
+               value = "imx_k_[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
