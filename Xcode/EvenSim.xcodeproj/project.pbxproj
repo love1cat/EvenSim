@@ -18,6 +18,8 @@
 		A1075C4B19D2750D00B0D6CC /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3E19D2750D00B0D6CC /* main.cc */; };
 		A1075C4C19D2750D00B0D6CC /* output.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3F19D2750D00B0D6CC /* output.cc */; };
 		A1075C4D19D2750D00B0D6CC /* random_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C4119D2750D00B0D6CC /* random_generator.cc */; };
+		A1075C5319D8F8DE00B0D6CC /* enhance_alg1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1075C5119D8F8DE00B0D6CC /* enhance_alg1.cpp */; };
+		A1075C5619D8FB1300B0D6CC /* enhance_alg2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1075C5419D8FB1300B0D6CC /* enhance_alg2.cpp */; };
 		A1D405181833363E00237F3B /* libconcert.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D405171833363E00237F3B /* libconcert.a */; };
 		A1D4051B1833367300237F3B /* libcplex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D405191833367300237F3B /* libcplex.a */; };
 		A1D4051C1833367300237F3B /* libilocplex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D4051A1833367300237F3B /* libilocplex.a */; };
@@ -64,6 +66,11 @@
 		A1075C4019D2750D00B0D6CC /* output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = output.h; path = ../../output.h; sourceTree = "<group>"; };
 		A1075C4119D2750D00B0D6CC /* random_generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = random_generator.cc; path = ../../random_generator.cc; sourceTree = "<group>"; };
 		A1075C4219D2750D00B0D6CC /* random_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = random_generator.h; path = ../../random_generator.h; sourceTree = "<group>"; };
+		A1075C4F19D8F5A300B0D6CC /* enhance_algbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enhance_algbase.h; path = ../../enhance_algbase.h; sourceTree = "<group>"; };
+		A1075C5119D8F8DE00B0D6CC /* enhance_alg1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enhance_alg1.cpp; path = ../../enhance_alg1.cpp; sourceTree = "<group>"; };
+		A1075C5219D8F8DE00B0D6CC /* enhance_alg1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enhance_alg1.h; path = ../../enhance_alg1.h; sourceTree = "<group>"; };
+		A1075C5419D8FB1300B0D6CC /* enhance_alg2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enhance_alg2.cpp; path = ../../enhance_alg2.cpp; sourceTree = "<group>"; };
+		A1075C5519D8FB1300B0D6CC /* enhance_alg2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enhance_alg2.h; path = ../../enhance_alg2.h; sourceTree = "<group>"; };
 		A1D405171833363E00237F3B /* libconcert.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libconcert.a; path = "../../../../Applications/IBM/ILOG/CPLEX_Studio124/concert/lib/x86-64_darwin9_gcc4.0/static_pic/libconcert.a"; sourceTree = "<group>"; };
 		A1D405191833367300237F3B /* libcplex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcplex.a; path = "../../../../Applications/IBM/ILOG/CPLEX_Studio124/cplex/lib/x86-64_darwin9_gcc4.0/static_pic/libcplex.a"; sourceTree = "<group>"; };
 		A1D4051A1833367300237F3B /* libilocplex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libilocplex.a; path = "../../../../Applications/IBM/ILOG/CPLEX_Studio124/cplex/lib/x86-64_darwin9_gcc4.0/static_pic/libilocplex.a"; sourceTree = "<group>"; };
@@ -138,6 +145,11 @@
 				A1075C4119D2750D00B0D6CC /* random_generator.cc */,
 				A1075C4219D2750D00B0D6CC /* random_generator.h */,
 				A1DD791918332A1B0085F2D2 /* EvenSim.1 */,
+				A1075C4F19D8F5A300B0D6CC /* enhance_algbase.h */,
+				A1075C5119D8F8DE00B0D6CC /* enhance_alg1.cpp */,
+				A1075C5219D8F8DE00B0D6CC /* enhance_alg1.h */,
+				A1075C5419D8FB1300B0D6CC /* enhance_alg2.cpp */,
+				A1075C5519D8FB1300B0D6CC /* enhance_alg2.h */,
 			);
 			path = EvenSim;
 			sourceTree = "<group>";
@@ -198,12 +210,14 @@
 				A1075C4819D2750D00B0D6CC /* input.cc in Sources */,
 				A1075C4519D2750D00B0D6CC /* grdalg_base.cc in Sources */,
 				A1075C4A19D2750D00B0D6CC /* lp_alg.cc in Sources */,
+				A1075C5619D8FB1300B0D6CC /* enhance_alg2.cpp in Sources */,
 				A1075C4319D2750D00B0D6CC /* alg_input.cc in Sources */,
 				A1075C4D19D2750D00B0D6CC /* random_generator.cc in Sources */,
 				A1075C4B19D2750D00B0D6CC /* main.cc in Sources */,
 				A1075C4419D2750D00B0D6CC /* algbase.cc in Sources */,
 				A1075C4C19D2750D00B0D6CC /* output.cc in Sources */,
 				A1075C4919D2750D00B0D6CC /* limited_optalg.cc in Sources */,
+				A1075C5319D8F8DE00B0D6CC /* enhance_alg1.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
