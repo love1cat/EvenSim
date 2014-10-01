@@ -74,7 +74,7 @@ namespace even_energy{
     inline int TotalRM(){return totalrm_;}
     inline int TotalAssumedRM(){return assumedTotalrm_;}
     inline int FavLocation(){return favloc_;}
-    inline const SensorSet& GetSensorSet(){return sensorSet_;}
+    inline SensorSet& GetSensorSet() {return sensorSet_;}
     
     // Hack for k heterougeneous
     inline void IncreaseTotalRM(const int rm) {
@@ -106,6 +106,7 @@ namespace even_energy{
     int get_obj();
     inline const std::vector<TargetPtr>& GetTargetVec(){return targetVec_;}
     double GetTheoryBound();
+    IntegerMatrix & GetRMMat() {return locrm_;}
   protected:
     virtual void SolveSubRoutine() = 0;
     int GetAssumedLowestTarget();

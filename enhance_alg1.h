@@ -15,7 +15,7 @@ namespace even_energy{
   
 class EnhanceAlg1 : public EnhanceAlgBase {
 public:
-  virtual void enhance(std::vector<TargetPtr>& tvec) const;
+  virtual void enhance(std::vector<TargetPtr>& tvec, const IntegerMatrix &rmmat) const;
   
 private:
   int GetLowestTarget(std::vector<TargetPtr> &tvec) const;

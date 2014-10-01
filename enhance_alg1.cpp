@@ -10,7 +10,7 @@
 
 namespace even_energy{
 
-  void EnhanceAlg1::enhance(std::vector<TargetPtr> &tvec) const {
+  void EnhanceAlg1::enhance(std::vector<TargetPtr> &tvec, const IntegerMatrix &rmmat) const {
     bool isSteady = false;
     while(!isSteady){
       isSteady = true;

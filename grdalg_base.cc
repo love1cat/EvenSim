@@ -83,7 +83,7 @@ namespace even_energy {
   }
   
   void GreedyAlgBase::enhance(EnhanceAlgBase *enhance_alg){
-    enhance_alg->enhance(targetVec_);
+    enhance_alg->enhance(targetVec_, locrm_);
   }
   
   int GreedyAlgBase::get_obj() {
