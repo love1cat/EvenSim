@@ -10,8 +10,9 @@
 
 namespace even_energy{
 
-  void EnhanceAlg1::enhance(std::vector<TargetPtr> &tvec, const IntegerMatrix &rmmat) const {
+  void EnhanceAlg1::enhance(GreedyAlgBase * grd_alg) const {
     bool isSteady = false;
+    std::vector<TargetPtr> &tvec = grd_alg->GetTargetVec();
     while(!isSteady){
       isSteady = true;
       int lowid = GetLowestTarget(tvec);

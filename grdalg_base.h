@@ -104,9 +104,11 @@ namespace even_energy{
     virtual int Solve(const AlgorithmInputReader& air);
     void enhance(EnhanceAlgBase *enhance_alg);
     int get_obj();
-    inline const std::vector<TargetPtr>& GetTargetVec(){return targetVec_;}
+    inline std::vector<TargetPtr>& GetTargetVec(){return targetVec_;}
     double GetTheoryBound();
     IntegerMatrix & GetRMMat() {return locrm_;}
+    inline const IntegerMatrix & GetLocRM() const {return locrm_;}
+    inline int GetEnergyDiff() const {return energy_diff_;}
   protected:
     virtual void SolveSubRoutine() = 0;
     int GetAssumedLowestTarget();

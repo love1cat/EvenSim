@@ -157,8 +157,8 @@ Result OneRun(double higher_sensor_ratio, int location_num, int highsensor_diff,
     //    ++r.count;
     
     obj_ratio.push_back((double)grdalg_gen_objval / (double)lpval);
-    obj_ratio_enh.push_back((double)grdalg_gen_objval_enh / (double)lpval);
-    obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)lpval);
+    obj_ratio_enh.push_back((double)grdalg_gen_objval_enh / (double)grdalg_gen_objval);
+    obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)grdalg_gen_objval);
   }
   //double ratio = Mean(grdalg_gen_obj) / Mean(lp_obj);
   //std::cout << "*******Ratio = " << ratio << "*******" << std::endl;
@@ -229,21 +229,21 @@ void RunScen() {
       
       ow2.WriteVal(locnum[i]);
       ow2.WriteVal("\t");
-      ow2.WriteVal(CapOne(r.objratio_mean_enh));
+      ow2.WriteVal(r.objratio_mean_enh);
       ow2.WriteVal("\t");
-      ow2.WriteVal(CapOne(r.min_enh));
+      ow2.WriteVal(r.min_enh);
       ow2.WriteVal("\t");
-      ow2.WriteVal(CapOne(r.max_enh));
+      ow2.WriteVal(r.max_enh);
       ow2.WriteVal("\t");
       ow2.WriteEndOfLine();
       
       ow3.WriteVal(locnum[i]);
       ow3.WriteVal("\t");
-      ow3.WriteVal(CapOne(r.objratio_mean_enh2));
+      ow3.WriteVal(r.objratio_mean_enh2);
       ow3.WriteVal("\t");
-      ow3.WriteVal(CapOne(r.min_enh2));
+      ow3.WriteVal(r.min_enh2);
       ow3.WriteVal("\t");
-      ow3.WriteVal(CapOne(r.max_enh2));
+      ow3.WriteVal(r.max_enh2);
       ow3.WriteVal("\t");
       ow3.WriteEndOfLine();
       

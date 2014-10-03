@@ -15,7 +15,7 @@ namespace even_energy{
 
 class EnhanceAlgBase {
 public:
-  virtual void enhance(std::vector<TargetPtr>& tvec, const IntegerMatrix &rmmat) const = 0;
+  virtual void enhance(GreedyAlgBase * grd_alg) const = 0;
 };
   
 }

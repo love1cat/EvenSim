@@ -11,7 +11,11 @@
 
 namespace even_energy{
   
-  void EnhanceAlg2::enhance(std::vector<TargetPtr> &tvec, const IntegerMatrix &rm) const {
+  void EnhanceAlg2::enhance(GreedyAlgBase * grd_alg) const {
+    std::vector<TargetPtr> &tvec = grd_alg->GetTargetVec();
+    const IntegerMatrix &rm = grd_alg->GetLocRM();
+    int ediff = grd_alg->GetEnergyDiff();
+    
     int lowid = GetLowestTarget(tvec);
     for (int i = 0; i < tvec.size() - 1; ++i) {
       if (i != lowid) {
@@ -22,10 +26,20 @@ namespace even_energy{
           for (SensorSet::iterator it2 = ss2.begin(); it2 != ss2.end(); ++it2) {
             const SensorPtr sp1 = *it1;
             const SensorPtr sp2 = *it2;
-            int &rm11 = rm[sp1->locationID][lowid];
-            int &rm12 = rm[sp1->locationID][i];
-            int &rm21 = rm[sp2->locationID][lowid];
-            int &rm22 = rm[sp2->locationID][i];
+            int rm11 = rm[sp1->locationID][lowid];
+            int rm12 = rm[sp1->locationID][i];
+            if (sp1->type != 0) {
+              rm11 += ediff;
+              rm12 += ediff;
+            }
+            
+            int rm21 = rm[sp2->locationID][lowid];
+            int rm22 = rm[sp2->locationID][i];
+            if (sp2->type != 0) {
+              rm21 += ediff;
+              rm22 += ediff;
+            }
+            
             const int &trm1 = tvec[lowid]->TotalRM();
             const int &trm2 = tvec[i]->TotalRM();
             if (rm21 - rm11 > 0 && trm2 + rm12 - rm22 > trm1) {
