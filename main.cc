@@ -22,38 +22,56 @@
 
 FILE *timefp;
 
-int targetnum = 4;
-int sensornum = 40;
-int multiplier = 1; // hack
-int location_scen_num = 100;
-int width = 500;
-int height = 500;
-const int batttery_base = 3;
-
-int areawidth = 500; // area width for generating locations
-int areaheight = 500; // area height for generating locations
-int xoffset = 0; // x point of the area for generating locations
-int yoffset = 0; // y point of the area for generating locations
-int seed = 1124;
-
-std::string prefix;
-
-struct Result {
-  double obj_mean;
-  double objratio_mean;
-  double min;
-  double max;
-  int wincount;
-  int count;
+namespace {
+  const int TARGET_NUM = 4;
+  const int MULTIPLIER = 1; // hack
+  const int LOCATION_SCEN_NUM = 100; // how many random starting scenarios we generate
+  const int WIDTH = 500;
+  const int HEIGHT = 500;
+  const int BATTERY_BASE = 3; // how many batteries low sensor carry
   
-  double objratio_mean_enh;
-  double min_enh;
-  double max_enh;
+  const int AREA_WIDTH = 500; // area WIDTH for generating locations
+  const int AREA_HEIGHT = 500; // area HEIGHT for generating locations
+  const int XOFFSET = 0; // x point of the area for generating locations
+  const int YOFFSET = 0; // y point of the area for generating locations
+  const int SEED = 1124;
+  const int BATTERY_POWER = 8829; // energy (J) per battery
+  const int ENERGY_PER_METER = 28;
   
-  double objratio_mean_enh2;
-  double min_enh2;
-  double max_enh2;
-};
+  std::string prefix;
+  
+  struct Result {
+    double obj_mean;
+    double objratio_mean;
+    double min;
+    double max;
+    int count;
+    
+    double objratio_mean_enh;
+    double min_enh;
+    double max_enh;
+    
+    double objratio_mean_enh2;
+    double min_enh2;
+    double max_enh2;
+  };
+  
+  struct RunArgs {
+    RunArgs() :
+    higher_sensor_ratio(0.1),
+    location_num(4),
+    highsensor_diff(3),
+    sensornum(100),
+    use_lp_relax(true) {}
+    
+    double higher_sensor_ratio; // ratio of high sensors among all sensors
+    int location_num;
+    int highsensor_diff; // how many more batteries high sensor carry compared to low sensor
+    int sensornum;
+    bool use_lp_relax;
+  };
+  
+}
 
 double CapOne(double val) {
   return val > 1.0 ? 1.0 : val;
@@ -87,24 +105,24 @@ double ApproxRatio(const int val1, const int val2) {
   return (double) val1 / (double) val2;
 }
 
-Result OneRun(double higher_sensor_ratio, int location_num, int highsensor_diff, int sensornum) {
-  sensornum *= multiplier;
-  const int total_battery = sensornum * batttery_base;
-  const int high_battery = highsensor_diff / 8829 + batttery_base;
-  const int high_sensor_num = sensornum * higher_sensor_ratio;
-  const int total_high_battery = high_sensor_num * high_battery;
-  const int low_sensor_num = (total_battery - total_high_battery ) / batttery_base;
+/** Run each algorithm in a number of randomly generated scenarios (LOCATION_SCEN_NUM) **/
+Result OneRun(const RunArgs &ra) {
+  //  sensornum *= MULTIPLIER;
+  assert(ra.sensornum % ra.location_num == 0 && "sensors should be able to divide over locations evenly.");
+  const int sensor_per_location = ra.sensornum / ra.location_num;
   
-  const int location_scenario_num = location_scen_num;
-  const int sensor_per_location = (low_sensor_num + high_sensor_num) / location_num;
-  const int higher_sensor_per_location = high_sensor_num / location_num;
-  //  const int sensor_per_location = sensornum / location_num;
+  const int highsensor_num = ra.sensornum * ra.higher_sensor_ratio;
+  assert((double)(highsensor_num / ra.sensornum) == ra.higher_sensor_ratio && "higher sensor ratio should give integer higher sensor number.");
+  assert((int)(ra.sensornum * ra.higher_sensor_ratio) % ra.location_num == 0 && "higher sensors should be able to divide over locations evenly.");
+  const int higher_sensor_per_location = ra.sensornum * ra.higher_sensor_ratio / ra.location_num;
+
   
   // Create default input
-  even_energy::AlgorithmInputWriter aiw(areawidth, areaheight, xoffset, yoffset);
-  aiw.WriteAlgorithmInputFiles(targetnum, location_num, 1, location_scenario_num, 8829*batttery_base, 28, seed, "alginput.txt", "./", prefix);
-  even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensor_per_location, higher_sensor_per_location, highsensor_diff);
+  even_energy::AlgorithmInputWriter aiw(AREA_WIDTH, AREA_HEIGHT, XOFFSET, YOFFSET);
+  aiw.WriteAlgorithmInputFiles(TARGET_NUM, ra.location_num, 1, LOCATION_SCEN_NUM, BATTERY_POWER * BATTERY_BASE, ENERGY_PER_METER, SEED, "alginput.txt", "./", prefix);
+  even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensor_per_location, higher_sensor_per_location, ra.highsensor_diff * BATTERY_POWER);
   
+  /** Algorithms **/
   even_energy::GreedyAlg1 grdalg1(true);
   //  even_energy::GreedyAlgGeneric grdalg_gen_ass(true);
   even_energy::GreedyAlgGeneric grdalg_gen(false);
@@ -114,6 +132,7 @@ Result OneRun(double higher_sensor_ratio, int location_num, int highsensor_diff,
   even_energy::EnhanceAlg1 enhanc1;
   even_energy::EnhanceAlg2 enhanc2;
   
+  /** Result vectors **/
   std::vector<double> grdalg_gen_obj; // objective value of greedy enhancing algorithm
   //  std::vector<double> grdalg_gen_ass_obj; // objective value of greedy enhancing algorithm
   std::vector<double> grdalg_gen_obj_enh;
@@ -125,43 +144,46 @@ Result OneRun(double higher_sensor_ratio, int location_num, int highsensor_diff,
   std::vector<double> obj_ratio_enh2;
   
   Result r;
-  r.wincount = 0;
   r.count = 0;
+  
+  /** Start simulation loop **/
   while (air.ReadNextInputSet()) {
-    // For comparison
-    //    lpa_int.SolveNextScenario(air.GetDataMatrix());
-    //    int lpval = lpa_int.GetCurrentResult().GetObjValue();
-    lpa.SolveNextScenario(air.GetDataMatrix());
-    int lpval = lpa.GetCurrentResult().GetObjValue();
+    
+    // LP algorithms
+    int lpval = 0;
+    if (ra.use_lp_relax) {
+      // LP-relax
+      lpa.SolveNextScenario(air.GetDataMatrix());
+      lpval = lpa.GetCurrentResult().GetObjValue();
+    } else {
+      // Integer LP
+      lpa_int.SolveNextScenario(air.GetDataMatrix());
+      lpval = lpa_int.GetCurrentResult().GetObjValue();
+    }
+    
     lp_obj.push_back(lpval);
     
     int grdalg_gen_objval = grdalg_gen.Solve(air); // no enhancing greedy alg
     
-    grdalg_gen.enhance(&enhanc1); // apply enhance alg 1
+    // apply enhance alg 1
+    grdalg_gen.enhance(&enhanc1);
     int grdalg_gen_objval_enh = grdalg_gen.get_obj(); // get obj after enhancing
     
-    grdalg_gen.enhance(&enhanc2); // apply enhance alg 2
+    // apply enhance alg 2
+    grdalg_gen.enhance(&enhanc2);
     int grdalg_gen_objval_enh2 = grdalg_gen.get_obj(); // get obj after enhancing
     
     grdalg_gen_obj.push_back(grdalg_gen_objval);
     grdalg_gen_obj_enh.push_back(grdalg_gen_objval_enh);
     grdalg_gen_obj_enh2.push_back(grdalg_gen_objval_enh2);
     
-    
-    //    int grdalg_gen_ass_objval = grdalg_gen_ass.Solve(air);
-    //    grdalg_gen_ass_obj.push_back(grdalg_gen_ass_objval);
-    //
-    //    if (grdalg_gen_objval >= grdalg_gen_ass_objval) {
-    //      ++r.wincount;
-    //    }
-    //    ++r.count;
+    ++r.count;
     
     obj_ratio.push_back((double)grdalg_gen_objval / (double)lpval);
-    obj_ratio_enh.push_back((double)grdalg_gen_objval_enh / (double)grdalg_gen_objval);
-    obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)grdalg_gen_objval);
+    obj_ratio_enh.push_back((double)grdalg_gen_objval_enh / (double)lpval);
+    obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)lpval);
   }
-  //double ratio = Mean(grdalg_gen_obj) / Mean(lp_obj);
-  //std::cout << "*******Ratio = " << ratio << "*******" << std::endl;
+  
   std::ofstream ratiofile("lp_grd_ratio.txt", std::fstream::app);
   ratiofile << "Mean: " << Mean(obj_ratio) << std::endl;
   ratiofile << "Max: " << *(std::max_element(obj_ratio.begin(), obj_ratio.end())) << std::endl;
@@ -184,17 +206,16 @@ Result OneRun(double higher_sensor_ratio, int location_num, int highsensor_diff,
   return r;
 }
 
-void OutputRunCount(int &run_count) {
-  std::cout << "******** Run = " << ++run_count << "********" << std::endl;
-}
-
+/** Run small scale **/
 void RunScen() {
   std::string outfile;
-  int highsensor_diff = 8829 * batttery_base;
+  RunArgs ra;
+  ra.sensornum = 40;
+  ra.use_lp_relax = false;
+  ra.higher_sensor_ratio = 0.25;
+  ra.highsensor_diff = 3;
   
-  double ediff[] = {0, 8829 * batttery_base};
   double locnum[] = {1, 2, 5, 10};
-  double ratio[] = {0.0, 0.25, 0.5};
   
   // Small test for interger LP
   
@@ -214,10 +235,11 @@ void RunScen() {
     int wincount = 0;
     int count = 0;
     for (int i = 0; i < 4; ++i) {
+      ra.location_num = locnum[i];
+      
       ow.WriteVal(locnum[i]);
       ow.WriteVal("\t");
-      Result r = OneRun(0.25, locnum[i], 8829, sensornum);
-      wincount += r.wincount;
+      Result r = OneRun(ra);
       count += r.count;
       ow.WriteVal(CapOne(r.objratio_mean));
       ow.WriteVal("\t");
@@ -246,148 +268,19 @@ void RunScen() {
       ow3.WriteVal(r.max_enh2);
       ow3.WriteVal("\t");
       ow3.WriteEndOfLine();
-      
-      OutputRunCount(run_count);
     }
-    std::cout<<"*****WINCOUNT="<<wincount<<"*****"<<std::endl;
-    std::cout<<"*****COUNT="<<count<<"*****"<<std::endl;
   }
-  
-  //  // Diff ratio and min, max, avg of objratio
-  //  outfile = prefix + "out_diff_ratio_minmaxavg.txt";
-  //  {
-  //    // Clean the file.
-  //    even_energy::OutputWriter ow(outfile, true);
-  //    even_energy::OutputWriter ow2("enh_" + outfile, true);
-  //    even_energy::OutputWriter ow3("enh2_" + outfile, true);
-  //  }
-  //  {
-  //    even_energy::OutputWriter ow(outfile, true);
-  //    even_energy::OutputWriter ow2("enh_" + outfile, true);
-  //    even_energy::OutputWriter ow3("enh2_" + outfile, true);
-  //
-  //    int wincount = 0;
-  //    int count = 0;
-  //    for (int i = 0; i < 3; ++i) {
-  //      ow.WriteVal(ratio[i]);
-  //      ow.WriteVal("\t");
-  //      Result r = OneRun(ratio[i], 5, 8829, sensornum);
-  //      wincount += r.wincount;
-  //      count += r.count;
-  //      ow.WriteVal(CapOne(r.objratio_mean));
-  //      ow.WriteVal("\t");
-  //      ow.WriteVal(CapOne(r.min));
-  //      ow.WriteVal("\t");
-  //      ow.WriteVal(CapOne(r.max));
-  //      ow.WriteVal("\t");
-  //      ow.WriteEndOfLine();
-  //
-  //      ow2.WriteVal(ratio[i]);
-  //      ow2.WriteVal("\t");
-  //      ow2.WriteVal(CapOne(r.objratio_mean_enh));
-  //      ow2.WriteVal("\t");
-  //      ow2.WriteVal(CapOne(r.min_enh));
-  //      ow2.WriteVal("\t");
-  //      ow2.WriteVal(CapOne(r.max_enh));
-  //      ow2.WriteVal("\t");
-  //      ow2.WriteEndOfLine();
-  //
-  //      ow3.WriteVal(locnum[i]);
-  //      ow3.WriteVal("\t");
-  //      ow3.WriteVal(CapOne(r.objratio_mean_enh2));
-  //      ow3.WriteVal("\t");
-  //      ow3.WriteVal(CapOne(r.min_enh2));
-  //      ow3.WriteVal("\t");
-  //      ow3.WriteVal(CapOne(r.max_enh2));
-  //      ow3.WriteVal("\t");
-  //      ow3.WriteEndOfLine();
-  //
-  //      OutputRunCount(run_count);
-  //    }
-  //    std::cout<<"*****WINCOUNT="<<wincount<<"*****"<<std::endl;
-  //    std::cout<<"*****COUNT="<<count<<"*****"<<std::endl;
-  //  }
-  //  // Diff location, diff high ratio
-  //  outfile = prefix + "out_diff_loc_ratio.txt";
-  //  {
-  //    // Clean the file.
-  //    even_energy::OutputWriter ow(outfile, true);
-  //  }
-  //  {
-  //    even_energy::OutputWriter ow(outfile, true);
-  //    for (int i = 0; i < 4; ++i) {
-  //      ow.WriteVal(locnum[i]);
-  //      ow.WriteVal("\t");
-  //      for (int j = 0; j < 3; ++j) {
-  //        Result r = OneRun(ratio[j], locnum[i], highsensor_diff, sensornum);
-  //        int objval = r.obj_mean;
-  //        ow.WriteVal(objval / 1000 / multiplier);
-  //        ow.WriteVal("\t");
-  //        ow.WriteVal(r.objratio_mean);
-  //        ow.WriteVal("\t");
-  //        OutputRunCount(run_count);
-  //      }
-  //      ow.WriteEndOfLine();
-  //    }
-  //  }
-  //
-  //  // Diff location, diff energy diff
-  //  outfile = prefix + "out_diff_loc_ediff.txt";
-  //  {
-  //    // Clean the file.
-  //    even_energy::OutputWriter ow(outfile, true);
-  //  }
-  //  {
-  //    even_energy::OutputWriter ow(outfile, true);
-  //    for (int i = 0; i < 4; ++i) {
-  //      ow.WriteVal(locnum[i]);
-  //      ow.WriteVal("\t");
-  //      for (int j = 0; j < 2; ++j) {
-  //        Result r = OneRun(0.25, locnum[i], ediff[j], sensornum);
-  //        int objval = r.obj_mean;
-  //        ow.WriteVal(objval / 1000 / multiplier);
-  //        ow.WriteVal("\t");
-  //        ow.WriteVal(r.objratio_mean);
-  //        ow.WriteVal("\t");
-  //        OutputRunCount(run_count);
-  //      }
-  //      ow.WriteEndOfLine();
-  //    }
-  //  }
-  
-  //// Diff high ratio, diff location
-  //highsensor_diff = 3*8829;
-  //outfile = prefix + "out_diff_ratio_loc.txt";
-  //{
-  //	// Clean the file.
-  //	even_energy::OutputWriter ow(outfile, true);
-  //}
-  //{
-  //	even_energy::OutputWriter ow(outfile, true);
-  //	for (int i = 0; i < 3; ++i) {
-  //		ow.WriteVal(ratio[i] * sensornum);
-  //		ow.WriteVal("\t");
-  //		for (int j = 0; j < 4; ++j) {
-  //			Result r = OneRun(ratio[i], locnum[j], highsensor_diff, sensornum);
-  //			int objval = r.obj_mean;
-  //			ow.WriteVal(objval / 1000 / multiplier);
-  //			ow.WriteVal("\t");
-  //			OutputRunCount(run_count);
-  //		}
-  //		ow.WriteEndOfLine();
-  //	}
-  //}
 }
 
 //void RunLPCompareTest() {
-//  sensornum *= multiplier;
+//  sensornum *= MULTIPLIER;
 //  double higher_sensor_ratio = 0.1;
 //  int location_num = 5;
 //  int highsensor_diff = 8829;
 //  int sensornum = 50;
 //  const int location_scenario_num = 100; // large number may be too slow.
-//  const int total_battery = sensornum * batttery_base;
-//  const int high_battery = highsensor_diff / 8829 + batttery_base;
+//  const int total_battery = sensornum * BATTERY_BASE;
+//  const int high_battery = highsensor_diff / 8829 + BATTERY_BASE;
 //  const int high_sensor_num = sensornum * higher_sensor_ratio;
 //  const int total_high_battery = high_sensor_num * high_battery;
 //  const int low_sensor_num = (total_battery - total_high_battery ) / 3;
@@ -396,8 +289,8 @@ void RunScen() {
 //  //  const int sensor_per_location = sensornum / location_num;
 //
 //  // Create default input
-//  even_energy::AlgorithmInputWriter aiw(areawidth, areaheight, xoffset, yoffset);
-//  aiw.WriteAlgorithmInputFiles(targetnum, location_num, 1, location_scenario_num, 8829*batttery_base, 28, seed, "alginput.txt", "./", prefix);
+//  even_energy::AlgorithmInputWriter aiw(AREA_WIDTH, AREA_HEIGHT, XOFFSET, YOFFSET);
+//  aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, 1, location_scenario_num, 8829*BATTERY_BASE, 28, SEED, "alginput.txt", "./", prefix);
 //  even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensor_per_location, higher_sensor_per_location, highsensor_diff);
 //
 //  even_energy::LPAlg lpa_relax(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), true); // LP-relax
@@ -446,14 +339,14 @@ void RunScen() {
 //  int location_num = 1;
 //  int target_scen_number = 1;
 //  double highsensor_ratio = 0.0;
-//  int highsensor_diff = 8829 * batttery_base;
+//  int highsensor_diff = 8829 * BATTERY_BASE;
 //
 //  std::vector<double> vec_limoptval;
 //
-//  even_energy::AlgorithmInputWriter aiw_k(areawidth, areaheight, 0, 0);
+//  even_energy::AlgorithmInputWriter aiw_k(AREA_WIDTH, AREA_HEIGHT, 0, 0);
 //  // Create input for k heterogeneous sensors
 //  const int MAXK = 5;
-//  aiw_k.WriteAlgorithmInputFiles(targetnum, MAXK, target_scen_number, 1, 26487, 28, seed, "limalginput_k.txt", "./", prefix);
+//  aiw_k.WriteAlgorithmInputFiles(TARGET_NUM, MAXK, target_scen_number, 1, 26487, 28, SEED, "limalginput_k.txt", "./", prefix);
 //  even_energy::AlgorithmInputReader air_k("./EEinput/limalginput_k.txt", 1, 1, highsensor_diff);
 //
 //  even_energy::OutputWriter ow(prefix + "out_lim_diffarea.txt", true);
@@ -469,7 +362,7 @@ void RunScen() {
 //      offsets[i].x = offsets[i].y = 50 * i;
 //      // Create default input
 //      even_energy::AlgorithmInputWriter aiw(areasize.x, areasize.y, offsets[i].x, offsets[i].y);
-//      aiw.WriteAlgorithmInputFiles(targetnum, location_num, target_scen_number, location_scen_num, 26487, 28, seed, "limalginput.txt", "./", prefix);
+//      aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, target_scen_number, LOCATION_SCEN_NUM, 26487, 28, SEED, "limalginput.txt", "./", prefix);
 //      even_energy::AlgorithmInputReader air("./EEinput/limalginput.txt", num_regsensor[k], highsensor_ratio, highsensor_diff);
 //
 //      // Create input for k heterogeneous sensors
@@ -514,25 +407,25 @@ int main(int argc, const char * argv[]) {
   
   if (prefix == "line") {
     // line
-    int pointheight = height / 2;
-    int interval = width / (targetnum + 1);
+    int pointheight = HEIGHT / 2;
+    int interval = WIDTH / (TARGET_NUM + 1);
     FILE* fp = fopen("./EEinput/line_TargetFile.txt", "w");
-    fprintf(fp, "1\n0\n%d\n500\t500\n", targetnum);
-    for (int i = 0; i < targetnum; ++i) {
+    fprintf(fp, "1\n0\n%d\n500\t500\n", TARGET_NUM);
+    for (int i = 0; i < TARGET_NUM; ++i) {
       fprintf(fp, "%d\t%d\n", (i + 1) * interval, pointheight);
     }
     fclose(fp);
   } else{
     // even
-    int targetperline = sqrt(targetnum);
-    if(targetperline*targetperline != targetnum) {
+    int targetperline = sqrt(TARGET_NUM);
+    if(targetperline*targetperline != TARGET_NUM) {
       printf("No even deployment of targets available!\n");
       exit(1);
     }
-    int winterval = width / (targetperline + 1);
-    int hinterval = height / (targetperline + 1);
+    int winterval = WIDTH / (targetperline + 1);
+    int hinterval = HEIGHT / (targetperline + 1);
     FILE* fp = fopen("./EEinput/even_TargetFile.txt", "w");
-    fprintf(fp, "1\n0\n%d\n500\t500\n", targetnum);
+    fprintf(fp, "1\n0\n%d\n500\t500\n", TARGET_NUM);
     for(int i=0;i<targetperline;++i)
       for(int j=0;j<targetperline;++j){
         fprintf(fp, "%d\t%d\n", (i + 1) * winterval, (j + 1) * hinterval);
@@ -542,7 +435,7 @@ int main(int argc, const char * argv[]) {
   
   prefix = prefix + "_";
   
-  //RunSimScen(prefix, targetnum, sensornum, location_scen_num, areawidth, areaheight, xoffset, yoffset);
+  //RunSimScen(prefix, TARGET_NUM, sensornum, LOCATION_SCEN_NUM, AREA_WIDTH, AREA_HEIGHT, XOFFSET, YOFFSET);
   //RunLimitedHeter();
   RunScen();
   //RunLPCompareTest();
