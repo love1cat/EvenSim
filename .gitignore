@@ -6,7 +6,10 @@ CMakeCache.txt
 !build/
 build/*
 
-!build/EEinput/
+build/EEinput/*
+!build/EEinput/even_TargetFile.txt
+!build/EEinput/line_TargetFile.txt
+
 !build/DrawFigures/
 
 build/DrawFigures/*

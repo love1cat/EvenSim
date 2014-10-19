@@ -19,7 +19,9 @@ add_executable(${AppName} alg_input.cc alg_input.h algbase.cc algbase.h
     grdalg_base.cc grdalg_base.h grdalg_generic.cpp
     grdalg_generic.h input.cc input.h limited_optalg.cc
     limited_optalg.h lp_alg.cc lp_alg.h main.cc output.cc output.h
-    random_generator.cc random_generator.h)
+    random_generator.cc random_generator.h simulation.h simulation.cpp
+    enhance_algbase.h enhance_alg1.h enhance_alg1.cpp enhance_alg2.h
+    enhance_alg2.cpp)
 
 target_link_libraries(${AppName} ilocplex concert cplex m pthread)
       
