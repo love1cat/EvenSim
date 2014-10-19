@@ -21,7 +21,7 @@
 
 namespace {
   const int TARGET_NUM = 4;
-  const int LOCATION_SCEN_NUM = 100; // how many random starting scenarios we generate
+  const int LOCATION_SCEN_NUM = 50; // how many random starting scenarios we generate
   const int WIDTH = 500;
   const int HEIGHT = 500;
   const int BATTERY_BASE = 3; // how many batteries low sensor carry
@@ -76,7 +76,7 @@ namespace even_energy {
     const int sensor_per_location = ra.sensornum / ra.location_num;
     
     const int highsensor_num = ra.sensornum * ra.higher_sensor_ratio;
-    assert((double)(highsensor_num / ra.sensornum) == ra.higher_sensor_ratio && "higher sensor ratio should give integer higher sensor number.");
+    assert((double)highsensor_num / (double)ra.sensornum == ra.higher_sensor_ratio && "higher sensor ratio should give integer higher sensor number.");
     assert((int)(ra.sensornum * ra.higher_sensor_ratio) % ra.location_num == 0 && "higher sensors should be able to divide over locations evenly.");
     const int higher_sensor_per_location = ra.sensornum * ra.higher_sensor_ratio / ra.location_num;
     
@@ -148,12 +148,6 @@ namespace even_energy {
       obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)lpval);
     }
     
-    std::ofstream ratiofile("lp_grd_ratio.txt", std::fstream::app);
-    ratiofile << "Mean: " << Mean(obj_ratio) << std::endl;
-    ratiofile << "Max: " << *(std::max_element(obj_ratio.begin(), obj_ratio.end())) << std::endl;
-    ratiofile << "Min: " << *(std::min_element(obj_ratio.begin(), obj_ratio.end())) << std::endl;
-    ratiofile.close();
-    
     r.obj_mean = Mean(lp_obj);
     r.objratio_mean = Mean(obj_ratio);
     r.max = *(std::max_element(obj_ratio.begin(), obj_ratio.end()));
@@ -200,5 +194,44 @@ namespace even_energy {
         }
       fclose(fp);
     }
+  }
+  
+  void Simulation::RunOptimalGrd(const std::string &outfile) {
+    int sensornum[] = {20, 40, 60, 80, 100};
+    int location_num = 1;
+    int target_scen_number = 1;
+    
+    std::vector<double> vec_optval;
+    
+    const int SENSORPATTERN = 5;
+    
+    even_energy::OutputWriter ow("./opt_grd/" + prefix_ + outfile, true);
+    
+    even_energy::Point areasize, offsets[5];
+    areasize.x = areasize.y = 50;
+    int count = 0;
+    for (int k = 0; k < SENSORPATTERN; ++k) {
+      ow.WriteVal(sensornum[k]);
+      ow.WriteVal("\t");
+      for (int i = 0; i < 5; ++i) {
+        std::cout << "Run " << count++ <<std::endl;
+        offsets[i].x = offsets[i].y = 50 * i;
+        // Create default input
+        even_energy::AlgorithmInputWriter aiw(areasize.x, areasize.y, offsets[i].x, offsets[i].y);
+        aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, target_scen_number, LOCATION_SCEN_NUM, 26487, 28, SEED, "alginput.txt", "./", prefix_);
+        even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensornum[k], 0, 0);
+        
+        even_energy::GreedyAlgGeneric grdalg_gen(false);
+        
+        while(air.ReadNextInputSet()) {
+          int optval = grdalg_gen.Solve(air);
+          vec_optval.push_back(optval);
+        }
+        ow.WriteVal((int)(Mean(vec_optval) / 1000)); // /1000 = KJ
+        ow.WriteVal("\t");
+      }
+      ow.WriteEndOfLine();
+    }
+    std::cout << "Done optimal greedy with different area case." << count++ <<std::endl;
   }
 }
