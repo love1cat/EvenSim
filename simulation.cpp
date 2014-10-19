@@ -196,7 +196,7 @@ namespace even_energy {
     }
   }
   
-  void Simulation::RunOptimalGrd(const std::string &outfile) {
+  void Simulation::RunOptimalGrd(const std::string &outfile) const {
     int sensornum[] = {20, 40, 60, 80, 100};
     int location_num = 1;
     int target_scen_number = 1;

@@ -49,7 +49,7 @@ namespace even_energy{
   public:
     Simulation(const std::string &prefix);
     Result OneRun(const RunArgs &ra) const;
-    void RunOptimalGrd(const std::string &outfile);
+    void RunOptimalGrd(const std::string &outfile) const;
     const std::string & prefix() const {return prefix_;}
   private:
     void GenerateTargets() const;
