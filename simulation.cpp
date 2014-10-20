@@ -21,7 +21,7 @@
 
 namespace {
   const int TARGET_NUM = 4;
-  const int LOCATION_SCEN_NUM = 50; // how many random starting scenarios we generate
+  const int LOCATION_SCEN_NUM = 100; // how many random starting scenarios we generate
   const int WIDTH = 500;
   const int HEIGHT = 500;
   const int BATTERY_BASE = 3; // how many batteries low sensor carry
