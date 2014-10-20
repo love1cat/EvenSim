@@ -34,108 +34,26 @@ set grid xtics lt 0 lw 1 lc rgb "#bbbbbb"
 #dalog using 5:xtic(1) title "Area 4", \
 #dalog using 6:xtic(1) title "Area 5"
 
-#####################################
-# plot diff loc energy results
-#####################################
-# set yrange [490:590]
-dleeps = "even_dlocenergy.eps"
-dle_ovr_eps = "even_dlocenergy_ovr.eps"
-dlelog = "even_out_diff_loc_ediff.txt"
-
-# Draw obj value
-set terminal postscript eps color enhanced "Times-Roman" fontsize
-set output dleeps
-#set xrange [0:11]
-set yrange [180:240]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value (KJ)"
-plot dlelog using 2:xtic(1) title "b = 3, h = 10", \
-dlelog using 4:xtic(1) title "b = 6, h = 10"
-
-# Draw obj value ratio
-set terminal postscript eps color enhanced "Times-Roman" fontsize
-set output dle_ovr_eps
-#set xrange [0:11]
-set yrange [0.80:1.01]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Avg. Objective Value Ratio"
-plot dlelog using 3:xtic(1) title "b = 3, h = 10", \
-dlelog using 5:xtic(1) title "b = 6, h = 10"
-
-#####################################
-# plot diff loc ratio results
-#####################################
-# set yrange [480:610]
-dlreps = "even_dlocratio.eps"
-dlrlog = "even_out_diff_loc_ratio.txt"
-dlr_ovr_eps = "even_dlocratio_ovr.eps"
-
-# Draw obj value
-set terminal postscript eps color enhanced "Times-Roman" fontsize
-set output dlreps
-set yrange [180:245]
-#set xrange [0:11]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value (KJ)"
-plot dlrlog using 2:xtic(1) title "h = 0, b = 6", \
-dlrlog using 4:xtic(1) title "h = 10, b = 6", \
-dlrlog using 6:xtic(1) title "h = 20, b = 6"
-
-# Draw obj value ratio
-set terminal postscript eps color enhanced "Times-Roman" fontsize
-set output dlr_ovr_eps
-set yrange [0.80:1.01]
-#set xrange [0:11]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value Ratio"
-plot dlrlog using 3:xtic(1) title "h = 0, b = 6", \
-dlrlog using 5:xtic(1) title "h = 10, b = 6", \
-dlrlog using 7:xtic(1) title "h = 20, b = 6"
-
 ####################################
 # plot obj ratio errorbars for diff loc with and without  enhance
 ####################################
-dlmmaeps = "even_dloc_minmaxavg_noenh.eps"
-dlmmalog = "even_out_diff_loc_minmaxavg.txt"
-
-dlmma2eps = "even_dloc_minmaxavg_enh.eps"
-dlmma2log = "even_out_diff_loc_minmaxavg_enh.txt"
-
-dlmma_avg_eps = "even_dloc_avg.eps"
-# mean obj value ratio
-set terminal postscript eps color enhanced "Times-Roman" 20
-set output dlmma_avg_eps
-#set xrange [0:11]
-set yrange [0.80:1.01]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Average Objective Value Ratio (OVR)"
-plot dlmmalog using 2:xtic(1) title "Average OVR w/o enhancing algorithm", \
-dlmma2log using 2:xtic(1) title "Average OVR w/ enhancing algorithm"
-
-# Without enhance
-set terminal postscript eps color enhanced "Times-Roman" 20
-set output dlmmaeps
-set xrange [0:11]
-set yrange [0.80:1.01]
-set key right bottom
-set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value Ratio (OVR)"
-plot dlmmalog using 1:2:3:4:xtic(1) title "OVR range w/o enhancing algorithms" with yerrorbars, \
- "" smooth csplines t "Average OVR w/o enhancing algorithms"
+small_eps = "even_dloc_minmaxavg_small.eps"
+small_log = "../small/even_out_diff_loc_minmaxavg.txt"
+small_enh_log = "../small/enh_even_out_diff_loc_minmaxavg.txt"
+small_enh2_log = "../small/enh2_even_out_diff_loc_minmaxavg.txt"
 
 # With enhance
 set terminal postscript eps color enhanced "Times-Roman" 20
-set output dlmma2eps
+set output small_eps
 set xrange [0:11]
 set yrange [0.80:1.01]
 set key right bottom
 set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value Ratio (OVR)"
-plot dlmma2log using 1:2:3:4:xtic(1) title "OVR range w/ enhancing algorithms" with yerrorbars, \
- "" smooth csplines t "Average OVR w/ enhancing algorithms"
+set ylabel "Objective Value / Optimal Solution" 
+plot small_log using 1:2:3:4:xtic(1) title "Algorithm 2" with yerrorbars, \
+ "" smooth csplines t "Average 2", \
+    small_enh_log using 1:2:3:4:xtic(1) title "Algorithm 3" with yerrorbars, \
+ "" smooth csplines t "Average 3", \
+    small_enh2_log using 1:2:3:4:xtic(1) title "Algorithm 4" with yerrorbars, \
+ "" smooth csplines t "Average 4"
 
