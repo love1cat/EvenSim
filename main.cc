@@ -19,6 +19,17 @@ FILE *timefp;
 
 namespace ee = even_energy;
 
+namespace {
+  void WriteRange(ee::OutputWriter &ow, const ee::Range &r) {
+    ow.WriteVal(r.avg);
+    ow.WriteVal("\t");
+    ow.WriteVal(r.min);
+    ow.WriteVal("\t");
+    ow.WriteVal(r.max);
+    ow.WriteVal("\t");
+  }
+}
+
 /** Run designed simulation 1 **/
 void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir) {
   std::string outfile, toutfile;
@@ -27,7 +38,7 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
   
   // Diff location and min, max, avg of objratio
   outfile = sim.prefix() + "out_diff_loc_minmaxavg.txt";
-  toutfile = sim.prefix() + "out_diff_loc_runtime.txt";
+  toutfile = sim.prefix() + "out_diff_loc_rt_ratio.txt";
   {
     // Clean the file.
     ee::OutputWriter ow(dir + outfile, true);
@@ -59,50 +70,31 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ee::Result r = sim.OneRun(ra);
       
       count += r.count;
-      ow.WriteVal(r.objratio_mean);
-      ow.WriteVal("\t");
-      ow.WriteVal(r.min);
-      ow.WriteVal("\t");
-      ow.WriteVal(r.max);
-      ow.WriteVal("\t");
+      WriteRange(ow, r.g_ratio);
       ow.WriteEndOfLine();
       
       tow.WriteVal(r.runtime);
       tow.WriteVal("\t");
       tow.WriteEndOfLine();
       
-      ow2.WriteVal(locnum[i]);
+      ow2.WriteVal((double)locnum[i]);
       ow2.WriteVal("\t");
-      ow2.WriteVal(r.objratio_mean_enh);
-      ow2.WriteVal("\t");
-      ow2.WriteVal(r.min_enh);
-      ow2.WriteVal("\t");
-      ow2.WriteVal(r.max_enh);
-      ow2.WriteVal("\t");
+      WriteRange(ow2, r.g_enh_ratio);
       ow2.WriteEndOfLine();
       
-      tow2.WriteVal(locnum[i]);
-      tow2.WriteVal(r.runtime_enh);
+      tow2.WriteVal((double)locnum[i]-0.2);
       tow2.WriteVal("\t");
-      tow2.WriteVal(r.runtime_enh_ratio);
-      tow2.WriteVal("\t");
+      WriteRange(tow2, r.rt_enh_ratio);
       tow2.WriteEndOfLine();
       
       ow3.WriteVal(locnum[i]);
       ow3.WriteVal("\t");
-      ow3.WriteVal(r.objratio_mean_enh2);
-      ow3.WriteVal("\t");
-      ow3.WriteVal(r.min_enh2);
-      ow3.WriteVal("\t");
-      ow3.WriteVal(r.max_enh2);
-      ow3.WriteVal("\t");
+      WriteRange(ow3, r.g_enh2_ratio);
       ow3.WriteEndOfLine();
       
-      tow3.WriteVal(locnum[i]);
-      tow3.WriteVal(r.runtime_enh2);
+      tow3.WriteVal((double)locnum[i]+0.2);
       tow3.WriteVal("\t");
-      tow3.WriteVal(r.runtime_enh2_ratio);
-      tow3.WriteVal("\t");
+      WriteRange(tow3, r.rt_enh2_ratio);
       tow3.WriteEndOfLine();
     }
   }
@@ -137,7 +129,7 @@ void RunScen2(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir
         int objval = r.obj_mean_enh2;
         ow.WriteVal(objval / 1000);
         ow.WriteVal("\t");
-        ow.WriteVal(r.objratio_mean_enh2);
+        ow.WriteVal(r.g_enh2_ratio.avg);
         ow.WriteVal("\t");
       }
       ow.WriteEndOfLine();

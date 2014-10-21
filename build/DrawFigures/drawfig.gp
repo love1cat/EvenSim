@@ -35,6 +35,8 @@ set grid ytics lt 0 lw 1 lc rgb "#bbbbbb"
 #dalog using 5:xtic(1) title "Area 4", \
 #dalog using 6:xtic(1) title "Area 5"
 
+#### SMALL SCEN ####
+
 ####################################
 # plot obj ratio errorbars for diff loc with and without  enhance
 ####################################

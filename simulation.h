@@ -14,27 +14,23 @@
 #include <string>
 
 namespace even_energy{
+  struct Range {
+    double min, max, avg;
+  };
+  
   struct Result {
     double obj_mean;
-    double objratio_mean;
-    double min;
-    double max;
+    Range g_ratio; // greedy / lp
     int count;
     double runtime;
     
     double obj_mean_enh;
-    double objratio_mean_enh;
-    double min_enh;
-    double max_enh;
-    double runtime_enh;
-    double runtime_enh_ratio;
+    Range g_enh_ratio;
+    Range rt_enh_ratio; // runtime ratio
     
     double obj_mean_enh2;
-    double objratio_mean_enh2;
-    double min_enh2;
-    double max_enh2;
-    double runtime_enh2;
-    double runtime_enh2_ratio;
+    Range g_enh2_ratio;
+    Range rt_enh2_ratio; // runtime ratio
   };
   
   struct RunArgs {
