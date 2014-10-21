@@ -176,7 +176,7 @@ int main(int argc, const char * argv[]) {
   RunScen(sim, ra, dir);
   
   /** Run optimal greedy **/
-  sim.RunOptimalGrd("opt_diff_area.txt");
+  //sim.RunOptimalGrd("opt_diff_area.txt");
   
   return 0;
 }
