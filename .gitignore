@@ -16,9 +16,8 @@ build/EEinput/*
 
 
 !build/DrawFigures/
-
 build/DrawFigures/*
-!build/DrawFigures/drawfig.gp
+!build/DrawFigures/*.gp
 
 CMakeFiles/*
 
