@@ -158,7 +158,7 @@ namespace even_energy {
     r.max_enh = *(std::max_element(obj_ratio_enh.begin(), obj_ratio_enh.end()));
     r.min_enh = *(std::min_element(obj_ratio_enh.begin(), obj_ratio_enh.end()));
     
-    r.obj_mean_enh = Mean(grdalg_gen_obj_enh2);
+    r.obj_mean_enh2 = Mean(grdalg_gen_obj_enh2);
     r.objratio_mean_enh2 = Mean(obj_ratio_enh2);
     r.max_enh2 = *(std::max_element(obj_ratio_enh2.begin(), obj_ratio_enh2.end()));
     r.min_enh2 = *(std::min_element(obj_ratio_enh2.begin(), obj_ratio_enh2.end()));
