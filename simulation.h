@@ -21,10 +21,12 @@ namespace even_energy{
     double max;
     int count;
     
+    double obj_mean_enh;
     double objratio_mean_enh;
     double min_enh;
     double max_enh;
     
+    double obj_mean_enh2;
     double objratio_mean_enh2;
     double min_enh2;
     double max_enh2;
