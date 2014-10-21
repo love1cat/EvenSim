@@ -136,7 +136,7 @@ int main(int argc, const char * argv[]) {
   ra.use_lp_relax = false;
   ra.highsensor_diff = 3;
   dir = "./small2/";
-  RunScen(sim, ra, dir);
+  RunScen2(sim, ra, dir);
   
 //  /** Run large scale **/
 //  ra.sensornum = 200;
