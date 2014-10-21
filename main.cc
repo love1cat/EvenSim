@@ -81,6 +81,7 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ow2.WriteVal("\t");
       ow2.WriteEndOfLine();
       
+      tow2.WriteVal(locnum[i]);
       tow2.WriteVal(r.runtime_enh);
       tow2.WriteVal("\t");
       tow2.WriteVal(r.runtime_enh_ratio);
@@ -97,6 +98,7 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ow3.WriteVal("\t");
       ow3.WriteEndOfLine();
       
+      tow3.WriteVal(locnum[i]);
       tow3.WriteVal(r.runtime_enh2);
       tow3.WriteVal("\t");
       tow3.WriteVal(r.runtime_enh2_ratio);
