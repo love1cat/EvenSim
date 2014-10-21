@@ -86,7 +86,7 @@ void RunScen2(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir
   int high_sensor_num[] = {0, 10, 20};
   const int TOTAL_BATTERY = 120;
   const int HIGH_BATTERY = 6;
-  const int LOW_BATTERY = 6;
+  const int LOW_BATTERY = 3;
   std::string outfile = sim.prefix() + "out_diff_loc_ratio.txt";
   {
     // Clean the file.
@@ -97,6 +97,7 @@ void RunScen2(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir
     for (int i = 0; i < 4; ++i) {
       ow.WriteVal(locnum[i]);
       ow.WriteVal("\t");
+      ra.location_num = locnum[i];
       for (int j = 0; j < 3; ++j) {
         assert(TOTAL_BATTERY >= HIGH_BATTERY * high_sensor_num[j]);
         int low_sensor_num = (TOTAL_BATTERY - HIGH_BATTERY * high_sensor_num[j]) / LOW_BATTERY;
@@ -122,14 +123,14 @@ int main(int argc, const char * argv[]) {
   std::string prefix = argv[1];
   
   ee::Simulation sim(prefix);
-  
+  ee::RunArgs ra;
+  std::string dir;
 //  /** Run small scale 1 **/
-//  ee::RunArgs ra;
 //  ra.sensornum = 40;
 //  ra.use_lp_relax = false;
 //  ra.higher_sensor_ratio = 0.25;
 //  ra.highsensor_diff = 3;
-//  std::string dir = "./small/";
+//  dir = "./small/";
 //  RunScen(sim, ra, dir);
   
   /** Run small scale 2 **/
