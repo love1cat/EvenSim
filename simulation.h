@@ -20,16 +20,21 @@ namespace even_energy{
     double min;
     double max;
     int count;
+    double runtime;
     
     double obj_mean_enh;
     double objratio_mean_enh;
     double min_enh;
     double max_enh;
+    double runtime_enh;
+    double runtime_enh_ratio;
     
     double obj_mean_enh2;
     double objratio_mean_enh2;
     double min_enh2;
     double max_enh2;
+    double runtime_enh2;
+    double runtime_enh2_ratio;
   };
   
   struct RunArgs {

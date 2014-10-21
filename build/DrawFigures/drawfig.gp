@@ -65,27 +65,28 @@ plot small_log using 1:2:3:4 title "Algorithm 2" with yerrorbars, \
 dlreps = "even_dlocratio.eps"
 dlrlog = "../small2/even_out_diff_loc_ratio.txt"
 dlr_ovr_eps = "even_dlocratio_ovr.eps"
+set grid xtics lt 0 lw 1 lc rgb "#bbbbbb"
 
 # Draw obj value
 set terminal postscript eps color enhanced "Times-Roman" fontsize
 set output dlreps
 set yrange [180:245]
 #set xrange [0:11]
-set key right bottom
+set key center bottom
 set xlabel "Number of starting locations (l)"
 set ylabel "Objective Value (KJ)"
-plot dlrlog using 2:xtic(1) title "h = 0, b = 6", \
-dlrlog using 4:xtic(1) title "h = 10, b = 6", \
-dlrlog using 6:xtic(1) title "h = 20, b = 6"
+plot dlrlog using 1:2:xtic(1) title "h = 0, b = 6", \
+dlrlog using 1:4:xtic(1) title "h = 10, b = 6", \
+dlrlog using 1:6:xtic(1) title "h = 20, b = 6"
 
 # Draw obj value ratio
 set terminal postscript eps color enhanced "Times-Roman" fontsize
 set output dlr_ovr_eps
-set yrange [0.80:1.01]
+set yrange [0.95:1.01]
 #set xrange [0:11]
-set key right bottom
+set key center bottom
 set xlabel "Number of starting locations (l)"
 set ylabel "Objective Value / Optimal Solution"
-plot dlrlog using 3:xtic(1) title "h = 0, b = 6", \
-dlrlog using 5:xtic(1) title "h = 10, b = 6", \
-dlrlog using 7:xtic(1) title "h = 20, b = 6"
+plot dlrlog using 1:3:xtic(1) title "h = 0, b = 6", \
+dlrlog using 1:5:xtic(1) title "h = 10, b = 6", \
+dlrlog using 1:7:xtic(1) title "h = 20, b = 6"

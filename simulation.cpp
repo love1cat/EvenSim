@@ -7,6 +7,7 @@
 //
 
 #include <cassert>
+#include <ctime>
 
 #include "alg_input.h"
 #include "lp_alg.h"
@@ -107,6 +108,10 @@ namespace even_energy {
     std::vector<double> obj_ratio_enh;
     std::vector<double> obj_ratio_enh2;
     
+    std::vector<double> runtime;
+    std::vector<double> runtime_enh;
+    std::vector<double> runtime_enh2;
+    
     Result r;
     r.count = 0;
     
@@ -114,6 +119,7 @@ namespace even_energy {
     while (air.ReadNextInputSet()) {
       
       // LP algorithms
+      clock_t start = clock();
       int lpval = 0;
       if (ra.use_lp_relax) {
         // LP-relax
@@ -124,18 +130,31 @@ namespace even_energy {
         lpa_int.SolveNextScenario(air.GetDataMatrix());
         lpval = lpa_int.GetCurrentResult().GetObjValue();
       }
+      clock_t duration = clock() - start;
+      double duration_sec = (double)duration / CLOCKS_PER_SEC;
       
       lp_obj.push_back(lpval);
+      runtime.push_back(duration_sec);
       
+      start = clock();
       int grdalg_gen_objval = grdalg_gen.Solve(air); // no enhancing greedy alg
       
       // apply enhance alg 1
       grdalg_gen.enhance(&enhanc1);
       int grdalg_gen_objval_enh = grdalg_gen.get_obj(); // get obj after enhancing
       
+      duration = clock() - start;
+      duration_sec = (double)duration / CLOCKS_PER_SEC;
+      runtime_enh.push_back(duration_sec);
+      
+      start = clock();
       // apply enhance alg 2
       grdalg_gen.enhance(&enhanc2);
       int grdalg_gen_objval_enh2 = grdalg_gen.get_obj(); // get obj after enhancing
+
+      duration += clock() - start; // duration of enhance 2 = duration of enhance 1 + actual running time
+      duration_sec = (double)duration / CLOCKS_PER_SEC;
+      runtime_enh2.push_back(duration_sec);
       
       grdalg_gen_obj.push_back(grdalg_gen_objval);
       grdalg_gen_obj_enh.push_back(grdalg_gen_objval_enh);
@@ -152,16 +171,21 @@ namespace even_energy {
     r.objratio_mean = Mean(obj_ratio);
     r.max = *(std::max_element(obj_ratio.begin(), obj_ratio.end()));
     r.min = *(std::min_element(obj_ratio.begin(), obj_ratio.end()));
+    r.runtime = Mean(runtime);
     
     r.obj_mean_enh = Mean(grdalg_gen_obj_enh);
     r.objratio_mean_enh = Mean(obj_ratio_enh);
     r.max_enh = *(std::max_element(obj_ratio_enh.begin(), obj_ratio_enh.end()));
     r.min_enh = *(std::min_element(obj_ratio_enh.begin(), obj_ratio_enh.end()));
+    r.runtime_enh = Mean(runtime_enh);
+    r.runtime_enh_ratio = r.runtime / r.runtime_enh;
     
     r.obj_mean_enh2 = Mean(grdalg_gen_obj_enh2);
     r.objratio_mean_enh2 = Mean(obj_ratio_enh2);
     r.max_enh2 = *(std::max_element(obj_ratio_enh2.begin(), obj_ratio_enh2.end()));
     r.min_enh2 = *(std::min_element(obj_ratio_enh2.begin(), obj_ratio_enh2.end()));
+    r.runtime_enh2 = Mean(runtime_enh2);
+    r.runtime_enh2_ratio = r.runtime / r.runtime_enh2;
     
     return r;
   }

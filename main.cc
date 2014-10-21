@@ -21,26 +21,38 @@ namespace ee = even_energy;
 
 /** Run designed simulation 1 **/
 void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir) {
-  std::string outfile;
+  std::string outfile, toutfile;
   
   double locnum[] = {1, 2, 5, 10};
   
   // Diff location and min, max, avg of objratio
   outfile = sim.prefix() + "out_diff_loc_minmaxavg.txt";
+  toutfile = sim.prefix() + "out_diff_loc_runtime.txt";
   {
     // Clean the file.
     ee::OutputWriter ow(dir + outfile, true);
     ee::OutputWriter ow2(dir + "enh_" + outfile, true);
     ee::OutputWriter ow3(dir + "enh2_" + outfile, true);
+    
+    ee::OutputWriter tow(dir + toutfile, true);
+    ee::OutputWriter tow2(dir + "enh_" + toutfile, true);
+    ee::OutputWriter tow3(dir + "enh2_" + toutfile, true);
   }
   {
     ee::OutputWriter ow(dir + outfile, true);
     ee::OutputWriter ow2(dir + "enh_" + outfile, true);
     ee::OutputWriter ow3(dir + "enh2_" + outfile, true);
+    
+    ee::OutputWriter tow(dir + toutfile, true);
+    ee::OutputWriter tow2(dir + "enh_" + toutfile, true);
+    ee::OutputWriter tow3(dir + "enh2_" + toutfile, true);
     int count = 0;
     for (int i = 0; i < 4; ++i) {
       ow.WriteVal(locnum[i]);
       ow.WriteVal("\t");
+      
+      tow.WriteVal(locnum[i]);
+      tow.WriteVal("\t");
       
       // Run now.
       ra.location_num = locnum[i];
@@ -55,6 +67,10 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ow.WriteVal("\t");
       ow.WriteEndOfLine();
       
+      tow.WriteVal(r.runtime);
+      tow.WriteVal("\t");
+      tow.WriteEndOfLine();
+      
       ow2.WriteVal(locnum[i]);
       ow2.WriteVal("\t");
       ow2.WriteVal(r.objratio_mean_enh);
@@ -65,6 +81,12 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ow2.WriteVal("\t");
       ow2.WriteEndOfLine();
       
+      tow2.WriteVal(r.runtime_enh);
+      tow2.WriteVal("\t");
+      tow2.WriteVal(r.runtime_enh_ratio);
+      tow2.WriteVal("\t");
+      tow2.WriteEndOfLine();
+      
       ow3.WriteVal(locnum[i]);
       ow3.WriteVal("\t");
       ow3.WriteVal(r.objratio_mean_enh2);
@@ -74,6 +96,12 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ow3.WriteVal(r.max_enh2);
       ow3.WriteVal("\t");
       ow3.WriteEndOfLine();
+      
+      tow3.WriteVal(r.runtime_enh2);
+      tow3.WriteVal("\t");
+      tow3.WriteVal(r.runtime_enh2_ratio);
+      tow3.WriteVal("\t");
+      tow3.WriteEndOfLine();
     }
   }
 }
@@ -133,19 +161,19 @@ int main(int argc, const char * argv[]) {
 //  dir = "./small/";
 //  RunScen(sim, ra, dir);
   
-  /** Run small scale 2 **/
-  ra.use_lp_relax = false;
-  ra.highsensor_diff = 3;
-  dir = "./small2/";
-  RunScen2(sim, ra, dir);
-  
-//  /** Run large scale **/
-//  ra.sensornum = 200;
-//  ra.use_lp_relax = true;
-//  ra.higher_sensor_ratio = 0.25;
+//  /** Run small scale 2 **/
+//  ra.use_lp_relax = false;
 //  ra.highsensor_diff = 3;
-//  dir = "./large/";
-//  RunScen(sim, ra, dir);
+//  dir = "./small2/";
+//  RunScen2(sim, ra, dir);
+  
+  /** Run large scale **/
+  ra.sensornum = 200;
+  ra.use_lp_relax = true;
+  ra.higher_sensor_ratio = 0.25;
+  ra.highsensor_diff = 3;
+  dir = "./large/";
+  RunScen(sim, ra, dir);
   
   /** Run optimal greedy **/
   sim.RunOptimalGrd("opt_diff_area.txt");
