@@ -3,17 +3,17 @@ Makefile
 cmake_install.cmake
 CMakeCache.txt
 
-!build/
 build/*
+
+!build/small
+!build/small2
+!build/large
+!build/opt_grd
 
 build/EEinput/*
 !build/EEinput/even_TargetFile.txt
 !build/EEinput/line_TargetFile.txt
 
-!build/small/*
-!build/small2/*
-!build/large/*
-!build/opt_grd/*
 
 !build/DrawFigures/
 
