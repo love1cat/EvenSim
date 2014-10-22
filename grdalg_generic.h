@@ -31,7 +31,6 @@ namespace even_energy{
       int targetid_;
     };
     
-    void init();
     std::vector<std::vector<int> > preferred_sensor_location_list_;
   private:
     bool use_assumed_energy_;

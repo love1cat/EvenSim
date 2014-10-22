@@ -11,7 +11,6 @@
 		A1075C4419D2750D00B0D6CC /* algbase.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C2C19D2750D00B0D6CC /* algbase.cc */; };
 		A1075C4519D2750D00B0D6CC /* grdalg_base.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3219D2750D00B0D6CC /* grdalg_base.cc */; };
 		A1075C4619D2750D00B0D6CC /* grdalg_generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3419D2750D00B0D6CC /* grdalg_generic.cpp */; };
-		A1075C4719D2750D00B0D6CC /* grdalg1.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3619D2750D00B0D6CC /* grdalg1.cc */; };
 		A1075C4819D2750D00B0D6CC /* input.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3819D2750D00B0D6CC /* input.cc */; };
 		A1075C4919D2750D00B0D6CC /* limited_optalg.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3A19D2750D00B0D6CC /* limited_optalg.cc */; };
 		A1075C4A19D2750D00B0D6CC /* lp_alg.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1075C3C19D2750D00B0D6CC /* lp_alg.cc */; };
@@ -54,8 +53,6 @@
 		A1075C3319D2750D00B0D6CC /* grdalg_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = grdalg_base.h; path = ../../grdalg_base.h; sourceTree = "<group>"; };
 		A1075C3419D2750D00B0D6CC /* grdalg_generic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = grdalg_generic.cpp; path = ../../grdalg_generic.cpp; sourceTree = "<group>"; };
 		A1075C3519D2750D00B0D6CC /* grdalg_generic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = grdalg_generic.h; path = ../../grdalg_generic.h; sourceTree = "<group>"; };
-		A1075C3619D2750D00B0D6CC /* grdalg1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = grdalg1.cc; path = ../../grdalg1.cc; sourceTree = "<group>"; };
-		A1075C3719D2750D00B0D6CC /* grdalg1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = grdalg1.h; path = ../../grdalg1.h; sourceTree = "<group>"; };
 		A1075C3819D2750D00B0D6CC /* input.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input.cc; path = ../../input.cc; sourceTree = "<group>"; };
 		A1075C3919D2750D00B0D6CC /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../../input.h; sourceTree = "<group>"; };
 		A1075C3A19D2750D00B0D6CC /* limited_optalg.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = limited_optalg.cc; path = ../../limited_optalg.cc; sourceTree = "<group>"; };
@@ -134,8 +131,6 @@
 				A1075C3319D2750D00B0D6CC /* grdalg_base.h */,
 				A1075C3419D2750D00B0D6CC /* grdalg_generic.cpp */,
 				A1075C3519D2750D00B0D6CC /* grdalg_generic.h */,
-				A1075C3619D2750D00B0D6CC /* grdalg1.cc */,
-				A1075C3719D2750D00B0D6CC /* grdalg1.h */,
 				A1075C3819D2750D00B0D6CC /* input.cc */,
 				A1075C3919D2750D00B0D6CC /* input.h */,
 				A1075C3A19D2750D00B0D6CC /* limited_optalg.cc */,
@@ -210,7 +205,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1075C4719D2750D00B0D6CC /* grdalg1.cc in Sources */,
 				A1075C4619D2750D00B0D6CC /* grdalg_generic.cpp in Sources */,
 				A12C428319F2CB6A00E88190 /* simulation.cpp in Sources */,
 				A1075C4819D2750D00B0D6CC /* input.cc in Sources */,

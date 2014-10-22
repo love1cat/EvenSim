@@ -10,7 +10,8 @@
 #include "grdalg_generic.h"
 
 namespace even_energy {
-  void GreedyAlgGeneric::init() {
+  
+  void GreedyAlgGeneric::SolveSubRoutine() {
     // Init preferred_sensor_location_list_
     for (int i = 0; i < targetVec_.size(); ++i) {
       std::vector<int> location_list;
@@ -20,17 +21,13 @@ namespace even_energy {
       preferred_sensor_location_list_.push_back(location_list);
     }
     
-    
     for (int i = 0; i < targetVec_.size(); ++i) {
       int targetid = i;
       // Init preferred_sensor_location_list_ for this target
       std::sort(preferred_sensor_location_list_[i].begin(), preferred_sensor_location_list_[i].end(), SensorLocationComparator(locrm_, targetid));
     }
-  }
-  
-  
-  void GreedyAlgGeneric::SolveSubRoutine() {
-    init();
+    
+    // Run greedy algorithm.
     int lowid = 0;
     while (IsSensorAvailable()) {
       lowid = GetLowestTarget();

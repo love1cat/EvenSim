@@ -12,7 +12,6 @@
 #include "alg_input.h"
 #include "lp_alg.h"
 #include "output.h"
-#include "grdalg1.h"
 #include "grdalg_generic.h"
 #include "limited_optalg.h"
 #include "enhance_alg1.h"
@@ -94,7 +93,6 @@ namespace even_energy {
     even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensor_per_location, higher_sensor_per_location, ra.highsensor_diff * BATTERY_POWER);
     
     /** Algorithms **/
-    even_energy::GreedyAlg1 grdalg1(true);
     //  even_energy::GreedyAlgGeneric grdalg_gen_ass(true);
     even_energy::GreedyAlgGeneric grdalg_gen;
     even_energy::LPAlg lpa(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), true); // LP-relax, For comparison

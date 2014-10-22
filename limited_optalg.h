@@ -10,12 +10,11 @@
 #define EvenSim_limited_optalg_h
 
 #include <boost/shared_ptr.hpp>
-#include "grdalg1.h"
+#include "grdalg_generic.h"
 #include "datatypes.h"
 
 namespace even_energy {
-	typedef boost::shared_ptr<GreedyAlg1> GreedyAlg1Ptr;
-	class LimitedOptimalAlgorithm : public GreedyAlg1 {
+	class LimitedOptimalAlgorithm : public GreedyAlgGeneric {
 	public:
 		LimitedOptimalAlgorithm(const int k, AlgorithmInputReader& air_k);
 		virtual int Solve(AlgorithmInputReader& air, bool isEnhance= false);
