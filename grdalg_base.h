@@ -28,7 +28,6 @@ namespace even_energy{
     inline Sensor(const int locIDval, const int typeval) : locationID(locIDval), type(typeval){id = count++;}
     const int locationID;
     const int type; // 0-low energy 1-high energy
-    int curRm;
     int realRm;
     int id;
   private:
@@ -72,18 +71,15 @@ namespace even_energy{
     SensorPtr LowSensor();
     inline int GetSize() const{return sensorSet_.size();}
     inline int TotalRM(){return totalrm_;}
-    inline int TotalAssumedRM(){return assumedTotalrm_;}
     inline int FavLocation(){return favloc_;}
     inline SensorSet& GetSensorSet() {return sensorSet_;}
     
     // Hack for k heterougeneous
     inline void IncreaseTotalRM(const int rm) {
-      assumedTotalrm_ += rm;
       totalrm_ += rm;
     }
     
     inline void DecreaseTotalRM(const int rm) {
-      assumedTotalrm_ -= rm;
       totalrm_ -= rm;
     }
   private:
@@ -91,7 +87,6 @@ namespace even_energy{
     const IntegerMatrix locrm_;
     SensorSet sensorSet_;
     int totalrm_;
-    int assumedTotalrm_;
     int favloc_;
     int energy_diff_;
     int id_;
@@ -111,7 +106,6 @@ namespace even_energy{
     inline int GetEnergyDiff() const {return energy_diff_;}
   protected:
     virtual void SolveSubRoutine() = 0;
-    int GetAssumedLowestTarget();
     int GetLowestTarget();
     void EnhanceAlg(std::vector<TargetPtr>& tvec);
     bool IsSensorAvailable();

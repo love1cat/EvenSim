@@ -23,7 +23,7 @@ namespace even_energy {
   
   Target::Target(const int id, const int location_count, const int energy_diff, const IntegerMatrix& locrm)
   : locrm_(locrm), energy_diff_(energy_diff) {
-    totalrm_ = assumedTotalrm_ = 0;
+    totalrm_ = 0;
     id_ = id;
     favloc_ = 0;
     int max = 0;
@@ -45,7 +45,6 @@ namespace even_energy {
     else
       sp->realRm = locrm_[sp->locationID][this->id_] + energy_diff_;
     sensorSet_.insert(sp);
-    assumedTotalrm_ += sp->curRm;
     totalrm_ += sp->realRm;
   }
   
@@ -55,7 +54,6 @@ namespace even_energy {
     SensorPtr ret;
     if (iter != sensorSet_.end()) {
       ret = *iter;
-      assumedTotalrm_ -= sp->curRm;
       totalrm_ -= sp->realRm;
       sensorSet_.erase(iter);
     }
@@ -89,17 +87,6 @@ namespace even_energy {
   int GreedyAlgBase::get_obj() {
     int lowid = GetLowestTarget();
     return targetVec_[lowid]->TotalRM();
-  }
-  
-  int GreedyAlgBase::GetAssumedLowestTarget() {
-    int low = std::numeric_limits<int>::max();
-    int id = 0;
-    for (int i = 0; i < targetVec_.size(); ++i)
-      if (targetVec_[i]->TotalAssumedRM() < low) {
-        low = targetVec_[i]->TotalAssumedRM();
-        id = i;
-      }
-    return id;
   }
   
   int GreedyAlgBase::GetLowestTarget() {

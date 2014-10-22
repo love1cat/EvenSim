@@ -96,7 +96,7 @@ namespace even_energy {
     /** Algorithms **/
     even_energy::GreedyAlg1 grdalg1(true);
     //  even_energy::GreedyAlgGeneric grdalg_gen_ass(true);
-    even_energy::GreedyAlgGeneric grdalg_gen(false);
+    even_energy::GreedyAlgGeneric grdalg_gen;
     even_energy::LPAlg lpa(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), true); // LP-relax, For comparison
     even_energy::LPAlg lpa_int(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), false); // Integer LP
     
@@ -247,7 +247,7 @@ namespace even_energy {
         aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, target_scen_number, LOCATION_SCEN_NUM, 26487, 28, SEED, "alginput.txt", "./", prefix_);
         even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensornum[k], 0, 0);
         
-        even_energy::GreedyAlgGeneric grdalg_gen(false);
+        even_energy::GreedyAlgGeneric grdalg_gen;
         
         while(air.ReadNextInputSet()) {
           int optval = grdalg_gen.Solve(air);

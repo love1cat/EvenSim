@@ -58,14 +58,14 @@ plot large_enh2_log using 1:2:3:4:xtic(1) title "Ratio range" with yerrorbars, \
 # plot runtim ratio errorbars for diff loc
 ####################################
 large_rt_eps = "even_dloc_rt_large.eps"
-large_rt_enh2_log = "../large/enh_even_out_diff_loc_rt_ratio.txt"
+large_rt_enh2_log = "../large/enh2_even_out_diff_loc_rt_ratio.txt"
 
 # With enhance
 set terminal postscript eps color enhanced "Times-Roman" 20
 set output large_rt_eps
 set xrange [0:11]
-set yrange [2:34]
-set key right bottom
+set yrange [0:18]
+set key center bottom
 set xlabel "Number of starting locations (l)"
 set ylabel "Running time - Best Approx. Alg. / Algorithm 4" 
 plot large_rt_enh2_log using 1:2:3:4:xtic(1) title "Ratio range" with yerrorbars, \

@@ -54,11 +54,11 @@ set key left bottom
 set xlabel "Number of starting locations (l)"
 set ylabel "Objective Value / Optimal Solution" 
 plot small_log using 1:2:3:4 title "Algorithm 2" with yerrorbars, \
- "" t "Average 2", \
+ "" t "Avg Ratio", \
     small_enh_log using 1:2:3:4:xtic(1) title "Algorithm 3" with yerrorbars, \
- "" t "Average 3", \
+ "" t "Avg Ratio", \
     small_enh2_log using 1:2:3:4 title "Algorithm 4" with yerrorbars, \
- "" t "Average 4"
+ "" t "Avg Ratio"
 
 #####################################
 # plot diff loc ratio results
