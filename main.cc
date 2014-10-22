@@ -147,19 +147,19 @@ int main(int argc, const char * argv[]) {
   ee::Simulation sim(prefix);
   ee::RunArgs ra;
   std::string dir;
-//  /** Run small scale 1 **/
-//  ra.sensornum = 40;
-//  ra.use_lp_relax = false;
-//  ra.higher_sensor_ratio = 0.25;
-//  ra.highsensor_diff = 3;
-//  dir = "./small/";
-//  RunScen(sim, ra, dir);
-  
-//  /** Run small scale 2 **/
-//  ra.use_lp_relax = false;
-//  ra.highsensor_diff = 3;
-//  dir = "./small2/";
-//  RunScen2(sim, ra, dir);
+  /** Run small scale 1 **/
+  ra.sensornum = 40;
+  ra.use_lp_relax = false;
+  ra.higher_sensor_ratio = 0.25;
+  ra.highsensor_diff = 3;
+  dir = "./small/";
+  RunScen(sim, ra, dir);
+
+  /** Run small scale 2 **/
+  ra.use_lp_relax = false;
+  ra.highsensor_diff = 3;
+  dir = "./small2/";
+  RunScen2(sim, ra, dir);
   
   /** Run large scale **/
   ra.sensornum = 200;
@@ -170,7 +170,7 @@ int main(int argc, const char * argv[]) {
   RunScen(sim, ra, dir);
   
   /** Run optimal greedy **/
-  //sim.RunOptimalGrd("opt_diff_area.txt");
+  sim.RunOptimalGrd("opt_diff_area.txt");
   
   return 0;
 }

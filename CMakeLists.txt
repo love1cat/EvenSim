@@ -15,7 +15,7 @@ link_directories("~/Tools/IBM/ILOG/CPLEX_Studio1251/concert/lib/x86-64_sles10_4.
 add_definitions(-DIL_STD)
 
 add_executable(${AppName} alg_input.cc alg_input.h algbase.cc algbase.h
-    datatypes.h exception.h geom.h grdalg1.cc grdalg1.h
+    datatypes.h exception.h geom.h
     grdalg_base.cc grdalg_base.h grdalg_generic.cpp
     grdalg_generic.h input.cc input.h limited_optalg.cc
     limited_optalg.h lp_alg.cc lp_alg.h main.cc output.cc output.h

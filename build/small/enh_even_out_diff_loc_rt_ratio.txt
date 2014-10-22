@@ -1,0 +1,4 @@
+0.8	inf	79	inf	
+1.8	inf	inf	inf	
+4.8	inf	294	inf	
+9.8	inf	inf	inf	
