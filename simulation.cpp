@@ -113,6 +113,7 @@ namespace even_energy {
     std::vector<double> obj_ratio_enh2;
     
     std::vector<double> runtime;
+    std::vector<double> runtime_ratio;
     std::vector<double> runtime_ratio_enh;
     std::vector<double> runtime_ratio_enh2;
     
@@ -143,6 +144,9 @@ namespace even_energy {
       
       start = clock();
       int grdalg_gen_objval = grdalg_gen.Solve(air); // no enhancing greedy alg
+      duration = clock() - start;
+      duration_sec = (double)duration / CLOCKS_PER_SEC;
+      runtime_ratio.push_back(runt / duration_sec);
       
       // apply enhance alg 1
       grdalg_gen.enhance(&enhanc1);
@@ -175,6 +179,7 @@ namespace even_energy {
     r.obj_mean = Mean(lp_obj);
     AssignMinMaxAvg(obj_ratio, r.g_ratio);
     r.runtime = Mean(runtime);
+    AssignMinMaxAvg(runtime_ratio, r.rt_ratio);
     
     r.obj_mean_enh = Mean(grdalg_gen_obj_enh);
     AssignMinMaxAvg(obj_ratio_enh, r.g_enh_ratio);
@@ -221,29 +226,27 @@ namespace even_energy {
   }
   
   void Simulation::RunOptimalGrd(const std::string &outfile) const {
-    int sensornum[] = {20, 40, 60, 80, 100};
+    const int TOTAL_BATTERY = 3 * 6 * 9 * 2;
+    const int BATTERIES[] = {3, 6, 9};
+    const int SENSORPATTERN = 3;
     int location_num = 1;
     int target_scen_number = 1;
     
     std::vector<double> vec_optval;
-    
-    const int SENSORPATTERN = 5;
     
     even_energy::OutputWriter ow("./opt_grd/" + prefix_ + outfile, true);
     
     even_energy::Point areasize, offsets[5];
     areasize.x = areasize.y = 50;
     int count = 0;
-    for (int k = 0; k < SENSORPATTERN; ++k) {
-      ow.WriteVal(sensornum[k]);
-      ow.WriteVal("\t");
-      for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i) {
+        for (int k = 0; k < SENSORPATTERN; ++k) {
         std::cout << "Run " << count++ <<std::endl;
         offsets[i].x = offsets[i].y = 50 * i;
         // Create default input
         even_energy::AlgorithmInputWriter aiw(areasize.x, areasize.y, offsets[i].x, offsets[i].y);
-        aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, target_scen_number, LOCATION_SCEN_NUM, 26487, 28, SEED, "alginput.txt", "./", prefix_);
-        even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", sensornum[k], 0, 0);
+        aiw.WriteAlgorithmInputFiles(TARGET_NUM, location_num, target_scen_number, LOCATION_SCEN_NUM, BATTERY_POWER * BATTERIES[k], 28, SEED, "alginput.txt", "./", prefix_);
+        even_energy::AlgorithmInputReader air("./EEinput/alginput.txt", TOTAL_BATTERY / BATTERIES[k], 0, 0);
         
         even_energy::GreedyAlgGeneric grdalg_gen;
         

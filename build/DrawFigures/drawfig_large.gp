@@ -42,6 +42,8 @@ set grid ytics lt 0 lw 1 lc rgb "#bbbbbb"
 ####################################
 large_eps = "even_dloc_minmaxavg_large.eps"
 large_enh2_log = "../large/enh2_even_out_diff_loc_minmaxavg.txt"
+large_enh_log = "../large/enh_even_out_diff_loc_minmaxavg.txt"
+large_log = "../large/even_out_diff_loc_minmaxavg.txt"
 
 # With enhance
 set terminal postscript eps color enhanced "Times-Roman" 20
@@ -50,24 +52,34 @@ set xrange [0:11]
 set yrange [0.92:1.06]
 set key right bottom
 set xlabel "Number of starting locations (l)"
-set ylabel "Objective Value - Algorithm 4 / Best Approx. Alg." 
-plot large_enh2_log using 1:2:3:4:xtic(1) title "Ratio range" with yerrorbars, \
- "" t "Average ratio" 
+set ylabel "Objective Value / Best Approx. Alg." 
+plot large_log using 1:2:3:4 title "Algorithm 2" with yerrorbars, \
+ "" t "Avg ratio", \
+    large_enh_log using 1:2:3:4:xtic(1) title "Algorithm 3" with yerrorbars, \
+ "" t "Avg ratio", \
+    large_enh2_log using 1:2:3:4 title "Algorithm 4" with yerrorbars, \
+ "" t "Avg ratio"
 
 ####################################
 # plot runtim ratio errorbars for diff loc
 ####################################
 large_rt_eps = "even_dloc_rt_large.eps"
 large_rt_enh2_log = "../large/enh2_even_out_diff_loc_rt_ratio.txt"
+large_rt_enh_log = "../large/enh_even_out_diff_loc_rt_ratio.txt"
+large_rt_log = "../large/even_out_diff_loc_rt_ratio.txt"
 
 # With enhance
 set terminal postscript eps color enhanced "Times-Roman" 20
 set output large_rt_eps
 set xrange [0:11]
-set yrange [0:18]
-set key center bottom
+set yrange [0:30]
+set key right top
 set xlabel "Number of starting locations (l)"
-set ylabel "Running time - Best Approx. Alg. / Algorithm 4" 
-plot large_rt_enh2_log using 1:2:3:4:xtic(1) title "Ratio range" with yerrorbars, \
- "" t "Average ratio" 
+set ylabel "Best Approx. Alg. / Running Time" 
+plot large_rt_log using 1:2:3:4 title "Algorithm 2" with yerrorbars, \
+ "" t "Avg ratio", \
+     large_rt_enh_log using 1:2:3:4:xtic(1) title "Algorithm 3" with yerrorbars, \
+ "" t "Avg ratio", \
+    large_rt_enh2_log using 1:2:3:4 title "Algorithm 4" with yerrorbars, \
+ "" t "Avg ratio"
 

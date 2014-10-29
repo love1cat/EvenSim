@@ -23,6 +23,7 @@ namespace even_energy{
     Range g_ratio; // greedy / lp
     int count;
     double runtime;
+    Range rt_ratio;
     
     double obj_mean_enh;
     Range g_enh_ratio;
