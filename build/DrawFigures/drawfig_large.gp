@@ -36,6 +36,24 @@ set grid ytics lt 0 lw 1 lc rgb "#bbbbbb"
 #dalog using 6:xtic(1) title "Area 5"
 
 #### LARGE SCEN ####
+####################################
+# plot obj graphs
+####################################
+tmp_rt = "even_dloc_runtime_large.eps"
+tmp_rt3_log = "../large/enh2_even_out_diff_loc_runtime.txt"
+tmp_rt2_log = "../large/enh_even_out_diff_loc_runtime.txt"
+tmp_rt1_log = "../large/even_out_diff_loc_runtime.txt"
+
+
+set terminal postscript eps color enhanced "Times-Roman" fontsize
+set output tmp_rt
+set yrange [0:0.15]
+set key right top
+set xlabel "Number of starting locations"
+set ylabel "Running time (s)"
+plot tmp_rt1_log using 2 title "Approximation alg", \
+tmp_rt2_log using 2 title "Algorithm 3", \
+tmp_rt3_log using 2 title "Algorithm 4"
 
 ####################################
 # plot obj ratio errorbars for diff loc

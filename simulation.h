@@ -19,19 +19,11 @@ namespace even_energy{
   };
   
   struct Result {
-    double obj_mean;
-    Range g_ratio; // greedy / lp
+    Range obj;
+    Range obj_ratio; // greedy / lp
     int count;
-    double runtime;
+    Range runtime;
     Range rt_ratio;
-    
-    double obj_mean_enh;
-    Range g_enh_ratio;
-    Range rt_enh_ratio; // runtime ratio
-    
-    double obj_mean_enh2;
-    Range g_enh2_ratio;
-    Range rt_enh2_ratio; // runtime ratio
   };
   
   struct RunArgs {
@@ -52,7 +44,7 @@ namespace even_energy{
   class Simulation {
   public:
     Simulation(const std::string &prefix);
-    Result OneRun(const RunArgs &ra) const;
+    std::vector<Result> OneRun(const RunArgs &ra) const;
     void RunOptimalGrd(const std::string &outfile) const;
     const std::string & prefix() const {return prefix_;}
   private:

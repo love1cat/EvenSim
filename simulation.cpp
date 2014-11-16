@@ -76,7 +76,7 @@ namespace even_energy {
     prefix_ += "_";
   }
   
-  Result Simulation::OneRun(const RunArgs &ra) const {
+  std::vector<Result> Simulation::OneRun(const RunArgs &ra) const {
     /** Run each algorithm in a number of randomly generated scenarios (LOCATION_SCEN_NUM) **/
     assert(ra.sensornum % ra.location_num == 0 && "sensors should be able to divide over locations evenly.");
     const int sensor_per_location = ra.sensornum / ra.location_num;
@@ -94,38 +94,43 @@ namespace even_energy {
     
     /** Algorithms **/
     //  even_energy::GreedyAlgGeneric grdalg_gen_ass(true);
-    even_energy::GreedyAlgGeneric grdalg_gen;
+    int alg_count = 0;
+
     even_energy::LPAlg lpa(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), true); // LP-relax, For comparison
     even_energy::LPAlg lpa_int(air.GetSensorCount(), air.GetTargetCount(), air.GetBatteryPower(), false); // Integer LP
+    const int LP_ALG_ID = alg_count++;
+    
+    even_energy::GreedyAlgGeneric grdalg_gen;
+    const int GRD_ALG_ID = alg_count++;
     
     even_energy::EnhanceAlg1 enhanc1;
+    const int ENH_ALG_ID = alg_count++;
     even_energy::EnhanceAlg2 enhanc2;
+    const int ENH2_ALG_ID = alg_count++;
     
     /** Result vectors **/
-    std::vector<double> grdalg_gen_obj; // objective value of greedy enhancing algorithm
-    //  std::vector<double> grdalg_gen_ass_obj; // objective value of greedy enhancing algorithm
-    std::vector<double> grdalg_gen_obj_enh;
-    std::vector<double> grdalg_gen_obj_enh2;
+    typedef std::vector<double> Values;
+    typedef std::vector<Values> ResultVec;
+    ResultVec objs(alg_count);
+    ResultVec obj_ratios(alg_count);
+    ResultVec runtimes(alg_count);
+    ResultVec runtime_ratios(alg_count);
     
-    std::vector<double> lp_obj;
-    std::vector<double> obj_ratio;
-    std::vector<double> obj_ratio_enh;
-    std::vector<double> obj_ratio_enh2;
-    
-    std::vector<double> runtime;
-    std::vector<double> runtime_ratio;
-    std::vector<double> runtime_ratio_enh;
-    std::vector<double> runtime_ratio_enh2;
-    
-    Result r;
-    r.count = 0;
+    std::vector<Result> r(alg_count);
+    for (int i = 0; i < alg_count; ++i) {
+      r[i].count = 0;
+    }
     
     /** Start simulation loop **/
     while (air.ReadNextInputSet()) {
+      std::vector<double> vals(alg_count);
+      std::vector<double> durations(alg_count);
+      double lpval = 0;
+      double lp_runt = 0.0;
+      
       
       // LP algorithms
       clock_t start = clock();
-      int lpval = 0;
       if (ra.use_lp_relax) {
         // LP-relax
         lpa.SolveNextScenario(air.GetDataMatrix());
@@ -135,60 +140,57 @@ namespace even_energy {
         lpa_int.SolveNextScenario(air.GetDataMatrix());
         lpval = lpa_int.GetCurrentResult().GetObjValue();
       }
+      vals[LP_ALG_ID] = lpval;
       clock_t duration = clock() - start;
       double duration_sec = (double)duration / CLOCKS_PER_SEC;
-      
-      lp_obj.push_back(lpval);
-      double runt = duration_sec;
-      runtime.push_back(runt);
+      lp_runt = duration_sec;
+      durations[LP_ALG_ID] = duration;
       
       start = clock();
-      int grdalg_gen_objval = grdalg_gen.Solve(air); // no enhancing greedy alg
+      vals[GRD_ALG_ID] = grdalg_gen.Solve(air); // no enhancing greedy alg
+      
       duration = clock() - start;
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      runtime_ratio.push_back(runt / duration_sec);
+      durations[GRD_ALG_ID] = duration;
       
       // apply enhance alg 1
       grdalg_gen.enhance(&enhanc1);
-      int grdalg_gen_objval_enh = grdalg_gen.get_obj(); // get obj after enhancing
+      vals[ENH_ALG_ID] = grdalg_gen.get_obj(); // get obj after enhancing
       
       duration = clock() - start;
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      runtime_ratio_enh.push_back(runt / duration_sec);
+      durations[ENH_ALG_ID] = duration;
       
-      start = clock();
       // apply enhance alg 2
       grdalg_gen.enhance(&enhanc2);
-      int grdalg_gen_objval_enh2 = grdalg_gen.get_obj(); // get obj after enhancing
+      vals[ENH2_ALG_ID] = grdalg_gen.get_obj(); // get obj after enhancing
 
       duration += clock() - start; // duration of enhance 2 = duration of enhance 1 + actual running time
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      runtime_ratio_enh2.push_back(runt / duration_sec);
+      durations[ENH2_ALG_ID] = duration;
       
-      grdalg_gen_obj.push_back(grdalg_gen_objval);
-      grdalg_gen_obj_enh.push_back(grdalg_gen_objval_enh);
-      grdalg_gen_obj_enh2.push_back(grdalg_gen_objval_enh2);
-      
-      ++r.count;
-      
-      obj_ratio.push_back((double)grdalg_gen_objval / (double)lpval);
-      obj_ratio_enh.push_back((double)grdalg_gen_objval_enh / (double)lpval);
-      obj_ratio_enh2.push_back((double)grdalg_gen_objval_enh2 / (double)lpval);
+      assert(vals.size() == alg_count &&
+             durations.size() == alg_count &&
+             objs.size() == alg_count &&
+             obj_ratios.size() == alg_count &&
+             runtimes.size() == alg_count &&
+             runtime_ratios.size() == alg_count &&
+             r.size() == alg_count);
+      for (int i = 0; i < alg_count; ++i) {
+        objs[i].push_back(vals[i]);
+        obj_ratios[i].push_back((double)vals[i] / lpval);
+        runtimes[i].push_back(durations[i]);
+        runtime_ratios[i].push_back(lp_runt / durations[i]);
+        ++r[i].count;
+      }
     }
     
-    r.obj_mean = Mean(lp_obj);
-    AssignMinMaxAvg(obj_ratio, r.g_ratio);
-    r.runtime = Mean(runtime);
-    AssignMinMaxAvg(runtime_ratio, r.rt_ratio);
-    
-    r.obj_mean_enh = Mean(grdalg_gen_obj_enh);
-    AssignMinMaxAvg(obj_ratio_enh, r.g_enh_ratio);
-    AssignMinMaxAvg(runtime_ratio_enh, r.rt_enh_ratio);
-    
-    
-    r.obj_mean_enh2 = Mean(grdalg_gen_obj_enh2);
-    AssignMinMaxAvg(obj_ratio_enh2, r.g_enh2_ratio);
-    AssignMinMaxAvg(runtime_ratio_enh2, r.rt_enh2_ratio);
+    for (int i = 0; i < alg_count; ++i) {
+      AssignMinMaxAvg(objs[i], r[i].obj);
+      AssignMinMaxAvg(obj_ratios[i], r[i].obj_ratio);
+      AssignMinMaxAvg(runtimes[i], r[i].runtime);
+      AssignMinMaxAvg(runtime_ratios[i], r[i].rt_ratio);
+    }
     
     return r;
   }
