@@ -144,14 +144,14 @@ namespace even_energy {
       clock_t duration = clock() - start;
       double duration_sec = (double)duration / CLOCKS_PER_SEC;
       lp_runt = duration_sec;
-      durations[LP_ALG_ID] = duration;
+      durations[LP_ALG_ID] = duration_sec;
       
       start = clock();
       vals[GRD_ALG_ID] = grdalg_gen.Solve(air); // no enhancing greedy alg
       
       duration = clock() - start;
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[GRD_ALG_ID] = duration;
+      durations[GRD_ALG_ID] = duration_sec;
       
       // apply enhance alg 1
       grdalg_gen.enhance(&enhanc1);
@@ -159,7 +159,7 @@ namespace even_energy {
       
       duration = clock() - start;
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[ENH_ALG_ID] = duration;
+      durations[ENH_ALG_ID] = duration_sec;
       
       // apply enhance alg 2
       grdalg_gen.enhance(&enhanc2);
@@ -167,7 +167,7 @@ namespace even_energy {
 
       duration += clock() - start; // duration of enhance 2 = duration of enhance 1 + actual running time
       duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[ENH2_ALG_ID] = duration;
+      durations[ENH2_ALG_ID] = duration_sec;
       
       assert(vals.size() == alg_count &&
              durations.size() == alg_count &&
@@ -178,9 +178,13 @@ namespace even_energy {
              r.size() == alg_count);
       for (int i = 0; i < alg_count; ++i) {
         objs[i].push_back(vals[i]);
-        obj_ratios[i].push_back((double)vals[i] / lpval);
+        if (lpval != 0.0) {
+          obj_ratios[i].push_back((double)vals[i] / lpval);
+        }
         runtimes[i].push_back(durations[i]);
-        runtime_ratios[i].push_back(lp_runt / durations[i]);
+        if (durations[i] != 0.0) {
+          runtime_ratios[i].push_back(lp_runt / durations[i]);
+        }
         ++r[i].count;
       }
     }
