@@ -54,7 +54,7 @@ namespace {
     return sqrt(deviation / v.size());
   }
   
-  int DiffPerc(const int val1, const int val2) {
+  double DiffPerc(const int val1, const int val2) {
     return (double) ((val1 - val2)*100) / (double) val1;
   }
   

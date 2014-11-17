@@ -115,7 +115,7 @@ int main(int argc, const char * argv[]) {
   std::string dir;
   /** Run small scale 1 **/
   ra.sensornum = 40;
-  ra.use_lp_relax = true;
+  ra.use_lp_relax = false;
   ra.higher_sensor_ratio = 0.25;
   ra.highsensor_diff = 3;
   dir = "./small/";
@@ -127,13 +127,13 @@ int main(int argc, const char * argv[]) {
 //  dir = "./small2/";
 //  RunScen2(sim, ra, dir);
   
-//  /** Run large scale **/
-//  ra.sensornum = 200;
-//  ra.use_lp_relax = true;
-//  ra.higher_sensor_ratio = 0.25;
-//  ra.highsensor_diff = 3;
-//  dir = "./large/";
-//  RunScen(sim, ra, dir);
+  /** Run large scale **/
+  ra.sensornum = 200;
+  ra.use_lp_relax = true;
+  ra.higher_sensor_ratio = 0.25;
+  ra.highsensor_diff = 3;
+  dir = "./large/";
+  RunScen(sim, ra, dir);
   
 //  /** Run optimal greedy **/
 //  sim.RunOptimalGrd("opt_diff_area.txt");
