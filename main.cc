@@ -49,7 +49,15 @@ void RunScen(const ee::Simulation &sim, ee::RunArgs &ra, const std::string &dir)
       ra.location_num = locnum[i];
       std::vector<ee::Result> r = sim.OneRun(ra);
       
+      r[i].runtime.avg /= (double)CLOCKS_PER_SEC;
+      r[i].runtime.max /= (double)CLOCKS_PER_SEC;
+      r[i].runtime.min /= (double)CLOCKS_PER_SEC;
+      
       ow.WriteVal(locnum[i]);
+      ow.WriteVal("\t");
+      ow.WriteVal(locnum[i] - 0.2);
+      ow.WriteVal("\t");
+      ow.WriteVal(locnum[i] + 0.2);
       ow.WriteVal("\t");
       for (int i = 0; i < r.size(); ++i) {
         WriteRange(ow, r[i].obj);

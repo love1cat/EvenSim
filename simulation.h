@@ -12,6 +12,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <ctime>
 
 namespace even_energy{
   struct Range {

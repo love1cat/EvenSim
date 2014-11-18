@@ -42,8 +42,6 @@ set grid ytics lt 0 lw 1 lc rgb "#bbbbbb"
 ####################################
 small_eps = "even_dloc_minmaxavg_small.eps"
 small_log = "../small/even_out_diff_loc_minmaxavg.txt"
-small_enh_log = "../small/enh_even_out_diff_loc_minmaxavg.txt"
-small_enh2_log = "../small/enh2_even_out_diff_loc_minmaxavg.txt"
 
 # With enhance
 set terminal postscript eps color enhanced "Times-Roman" 20
@@ -55,9 +53,9 @@ set xlabel "Number of starting locations (l)"
 set ylabel "Objective Value / Optimal Solution" 
 plot small_log using 1:18:19:20 title "Algorithm 2" with yerrorbars, \
    "" t "Avg Ratio", \
-      small_enh_log using 1:31:32:33:xtic(1) title "Algorithm 3" with        yerrorbars, \
+      small_log using 1:31:32:33:xtic(1) title "Algorithm 3" with        yerrorbars, \
    "" t "Avg Ratio", \
-      small_enh2_log using 1:44:45:46 title "Algorithm 4" with               yerrorbars, \
+      small_log using 1:44:45:46 title "Algorithm 4" with               yerrorbars, \
    "" t "Avg Ratio"
 
 #####################################

@@ -7,7 +7,6 @@
 //
 
 #include <cassert>
-#include <ctime>
 
 #include "alg_input.h"
 #include "lp_alg.h"
@@ -111,10 +110,11 @@ namespace even_energy {
     /** Result vectors **/
     typedef std::vector<double> Values;
     typedef std::vector<Values> ResultVec;
+
     ResultVec objs(alg_count);
     ResultVec obj_ratios(alg_count);
-    ResultVec runtimes(alg_count);
     ResultVec runtime_ratios(alg_count);
+    ResultVec runtimes(alg_count);
     
     std::vector<Result> r(alg_count);
     for (int i = 0; i < alg_count; ++i) {
@@ -124,9 +124,9 @@ namespace even_energy {
     /** Start simulation loop **/
     while (air.ReadNextInputSet()) {
       std::vector<double> vals(alg_count);
-      std::vector<double> durations(alg_count);
+      std::vector<clock_t> durations(alg_count);
       double lpval = 0;
-      double lp_runt = 0.0;
+      clock_t lp_runt = 0;
       
       
       // LP algorithms
@@ -142,32 +142,28 @@ namespace even_energy {
       }
       vals[LP_ALG_ID] = lpval;
       clock_t duration = clock() - start;
-      double duration_sec = (double)duration / CLOCKS_PER_SEC;
-      lp_runt = duration_sec;
-      durations[LP_ALG_ID] = duration_sec;
+      lp_runt = duration;
+      durations[LP_ALG_ID] = duration;
       
       start = clock();
       vals[GRD_ALG_ID] = grdalg_gen.Solve(air); // no enhancing greedy alg
       
       duration = clock() - start;
-      duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[GRD_ALG_ID] = duration_sec;
+      durations[GRD_ALG_ID] = duration;
       
       // apply enhance alg 1
       grdalg_gen.enhance(&enhanc1);
       vals[ENH_ALG_ID] = grdalg_gen.get_obj(); // get obj after enhancing
       
       duration = clock() - start;
-      duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[ENH_ALG_ID] = duration_sec;
+      durations[ENH_ALG_ID] = duration;
       
       // apply enhance alg 2
       grdalg_gen.enhance(&enhanc2);
       vals[ENH2_ALG_ID] = grdalg_gen.get_obj(); // get obj after enhancing
 
-      duration += clock() - start; // duration of enhance 2 = duration of enhance 1 + actual running time
-      duration_sec = (double)duration / CLOCKS_PER_SEC;
-      durations[ENH2_ALG_ID] = duration_sec;
+      duration = clock() - start; // duration of enhance 2 = duration of enhance 1 + actual running time
+      durations[ENH2_ALG_ID] = duration;
       
       assert(vals.size() == alg_count &&
              durations.size() == alg_count &&
@@ -181,9 +177,9 @@ namespace even_energy {
         if (lpval != 0.0) {
           obj_ratios[i].push_back((double)vals[i] / lpval);
         }
-        runtimes[i].push_back(durations[i]);
+        runtimes[i].push_back((double)durations[i]);
         if (durations[i] != 0.0) {
-          runtime_ratios[i].push_back(lp_runt / durations[i]);
+          runtime_ratios[i].push_back((double)lp_runt / (double)durations[i]);
         }
         ++r[i].count;
       }
